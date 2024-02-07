@@ -24,23 +24,34 @@ namespace ASP.NET_Core_Template.Controllers
             var result = await _emailService.RegisterProvider(providerRequest);
             return result.DefaultResult(_controller);
         }
+
         [HttpPut("edit-email")]
         public async Task<ActionResult<DefaultResponse>> UpdateProvider([FromBody] EmailRequest providerRequest, int id)
         {
             var result = await _emailService.UpdateProvider(providerRequest, id);
             return result.DefaultResult(_controller);
         }
+
         [HttpDelete("delete-email")]
         public async Task<ActionResult<DefaultResponse>> DeleteProvider(int id)
         {
             var result = await _emailService.DeleteProvider(id);
             return result.DefaultResult(_controller);
         }
+
         [HttpGet("get-emails")]
         public async Task<ActionResult<BaseResponse<List<Email>>>> GetAllProviders()
         {
-            var result = await _emailService.GetAllProviders();
-            return result.Result(_controller);
+            try
+            {
+                var result = await _emailService.GetAllProviders();
+                return result.Result(_controller);
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            
         }
     }
 }
