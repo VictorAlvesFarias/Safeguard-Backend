@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿
 using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -14,15 +14,12 @@ namespace Infrastructure.Repositories.BaseRepository
 
         private readonly ApplicationContext _context;
 
-        private readonly IMapper _mapper;
         public BaseRepository(
-            ApplicationContext entity,
-            IMapper mapper
+            ApplicationContext entity
         )
         {
             _entity = entity.Set<TEntity>();
             _context = entity;
-            _mapper = mapper;
         }
 
 
@@ -76,9 +73,8 @@ namespace Infrastructure.Repositories.BaseRepository
         public async Task<TEntity> GetAsync(int id)
         {
             var item = await _entity.FindAsync(id);
-            var result = _mapper.Map<TEntity>(item);
 
-            return result;
+            return item;
         }
         public async Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, object>>? include = null)
         {
