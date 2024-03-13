@@ -11,5 +11,6 @@ namespace Application.Dtos.Provider.Base
         public string Username { get; set; }
         public string Phone { get; set; }
         public string Image { get; set; }
+        public int PlatformId { get; set; }
     }
 }

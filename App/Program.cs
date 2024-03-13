@@ -29,8 +29,6 @@ builder.Services.AddSwagger();
 
 builder.Services.RegisterServices(builder.Configuration);
 
-builder.Services.RegisterMappers(builder.Configuration);
-
 builder.Services.AddDbContext<ApplicationContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );

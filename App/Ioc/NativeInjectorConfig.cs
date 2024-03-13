@@ -21,6 +21,7 @@ namespace ASP.NET_Core_Template.Ioc
 
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IProviderService, ProviderService>();
+            services.AddScoped<IPlatformService, PlatformService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IAccountService, AccountService>();
 

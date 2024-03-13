@@ -15,22 +15,25 @@ namespace Application.Services
 
         private readonly IBaseRepository<Account> _accountRepository;
         private readonly IBaseRepository<Email> _emailRepository;
+        private readonly IBaseRepository<Platform> _platformRepository;
 
         public AccountService
         (
              IBaseRepository<Account> accountRepository,
-             IBaseRepository<Email> emailRepository
+             IBaseRepository<Email> emailRepository,
+             IBaseRepository<Platform> platformRepository
         )
         {
             _accountRepository = accountRepository;
             _emailRepository = emailRepository; 
+            _platformRepository = platformRepository; 
         }
 
 
         public async Task<DefaultResponse> RegisterProvider(AccountRequest accountRequest)
         {
             var email = await _emailRepository.GetAsync(accountRequest.EmailId);
-
+            var plat = await _platformRepository.GetAsync(accountRequest.PlatformId);
             var account = new Account();
 
             account.Create(
@@ -39,7 +42,8 @@ namespace Application.Services
                 accountRequest.Password,
                 accountRequest.Phone,
                 email,
-                accountRequest.Image
+                accountRequest.Image,
+                plat
             );
 
             var success = await _accountRepository.AddAsync(account);
@@ -57,8 +61,8 @@ namespace Application.Services
         public async Task<DefaultResponse> UpdateProvider(AccountRequest accountRequest, int id)
         {
             var account = await _accountRepository.GetAsync(id);
-
             var email = await _emailRepository.GetAsync(accountRequest.EmailId);
+            var plat = await _platformRepository.GetAsync(accountRequest.PlatformId);
 
             account.Update(
                 accountRequest.Name,
@@ -66,8 +70,8 @@ namespace Application.Services
                 accountRequest.Password,
                 accountRequest.Phone,
                 email,
-                accountRequest.Image
-
+                accountRequest.Image,
+                plat
             );
 
             var success = _accountRepository.UpdateAsync(account);
