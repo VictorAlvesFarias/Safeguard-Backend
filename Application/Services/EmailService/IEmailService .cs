@@ -11,9 +11,9 @@ namespace Application.Services
 {
     public interface IEmailService
     {
-         Task<DefaultResponse> RegisterProvider(EmailRequest emailRequest);
-         Task<DefaultResponse> UpdateProvider(EmailRequest emailRequest, int id);
-        Task<DefaultResponse> DeleteProvider(int id);
-         Task<BaseResponse<List<Email>>> GetAllProviders();
+         Task<DefaultResponse> RegisterEmail(EmailRequest emailRequest);
+         Task<DefaultResponse> UpdateEmail(EmailRequest emailRequest, int id);
+        Task<DefaultResponse> DeleteEmail(int id);
+         Task<BaseResponse<List<Email>>> GetAllEmail();
     }
 }

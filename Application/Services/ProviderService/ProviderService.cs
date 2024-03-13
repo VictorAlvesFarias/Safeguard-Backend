@@ -14,7 +14,10 @@ namespace Application.Services
     public class ProviderService:IProviderService
     {
         public readonly IBaseRepository<Provider> _providerRepository;
-        public ProviderService(IBaseRepository<Provider> providerRepository)
+        public ProviderService
+        (
+            IBaseRepository<Provider> providerRepository
+        )
         { 
             _providerRepository = providerRepository;
         }
@@ -26,7 +29,8 @@ namespace Application.Services
             provider.Create(
                 providerRequest.Name,
                 providerRequest.Description,
-                providerRequest.Signature
+                providerRequest.Signature,
+                providerRequest.Image
             );
 
             var success = await _providerRepository.AddAsync(provider);
@@ -48,7 +52,8 @@ namespace Application.Services
             provider.Update(
                 providerRequest.Name,
                 providerRequest.Description,
-                providerRequest.Signature
+                providerRequest.Signature,
+                providerRequest.Image
             );
 
             var success =  _providerRepository.UpdateAsync(provider);

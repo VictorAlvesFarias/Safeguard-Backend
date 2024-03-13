@@ -1,7 +1,9 @@
 ﻿using Application.Dtos.Default;
 using Application.Dtos.Provider.Base;
 using Domain.Entitites;
+using Infrastructure.Context;
 using Infrastructure.Repositories.BaseRepository;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +17,16 @@ namespace Application.Services.EmailService
 
         public readonly IBaseRepository<Email> _emailRepository;
         public readonly IBaseRepository<Provider> _providerRepository;
-        public EmailService(IBaseRepository<Email> emailRepository)
+        public EmailService(
+            IBaseRepository<Email> emailRepository,
+            IBaseRepository<Provider> providerRepository
+)
         {
             _emailRepository = emailRepository;
+            _providerRepository = providerRepository;
         }
 
-        public async Task<DefaultResponse> RegisterProvider(EmailRequest emailRequest)
+        public async Task<DefaultResponse> RegisterEmail(EmailRequest emailRequest)
         {
             var provider = await _providerRepository.GetAsync(emailRequest.ProviderId);
 
@@ -46,7 +52,7 @@ namespace Application.Services.EmailService
 
             return response;
         }
-        public async Task<DefaultResponse> UpdateProvider(EmailRequest emailRequest, int id)
+        public async Task<DefaultResponse> UpdateEmail(EmailRequest emailRequest, int id)
         {
             var provider = await _providerRepository.GetAsync(emailRequest.ProviderId);
 
@@ -67,7 +73,7 @@ namespace Application.Services.EmailService
             return response;
 
         }
-        public async Task<DefaultResponse> DeleteProvider(int id)
+        public async Task<DefaultResponse> DeleteEmail(int id)
         {
             var provider = await _emailRepository.GetAsync(id);
 
@@ -77,10 +83,9 @@ namespace Application.Services.EmailService
 
             return response;
         }
-        public async Task<BaseResponse<List<Email>>> GetAllProviders()
+        public async Task<BaseResponse<List<Email>>> GetAllEmail()
         {
-
-            var emails = await _emailRepository.GetAllAsync();
+            var emails = await _emailRepository.GetAllAsync(x=>x.Provider);
 
             var response = new BaseResponse<List<Email>>()
             {
