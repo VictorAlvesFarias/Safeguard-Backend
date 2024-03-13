@@ -14,6 +14,14 @@ namespace ASP.NET_Core_Template.Controllers
         public readonly IAccountService _accountService;
         private readonly Controller _controller;
 
+        public AccountController
+        (
+            IAccountService accountService
+        )
+        {
+            _accountService = accountService;
+            _controller = this;   
+        }
 
         [HttpPost("create-account-network")]
         public async Task<ActionResult<DefaultResponse>> RegisterProvider([FromBody] AccountRequest accountRequest)

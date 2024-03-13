@@ -14,17 +14,20 @@ namespace Domain.Entitites
         public string Name { get; private set; }
         public string Description { get; private set; }
         public string Signature { get; private set; }
-        public void Create(string _name, string _desc, string _signature)
+        public string Image { get; private set; }
+        public void Create(string _name, string _desc, string _signature, string _image)
         {
             Name = _name;
             Description = _desc;
+            Image = _image;
             Signature = _signature;
         }
-        public void Update(string _name, string _desc, string signature)
+        public void Update(string _name, string _desc, string signature, string _image)
         {
             Name = _name??Name;
             Description = _desc??Description;
             Signature = signature??Signature;
+            Image = _image;
         }
     }
 }

@@ -16,6 +16,16 @@ namespace Application.Services
         private readonly IBaseRepository<Account> _accountRepository;
         private readonly IBaseRepository<Email> _emailRepository;
 
+        public AccountService
+        (
+             IBaseRepository<Account> accountRepository,
+             IBaseRepository<Email> emailRepository
+        )
+        {
+            _accountRepository = accountRepository;
+            _emailRepository = emailRepository; 
+        }
+
 
         public async Task<DefaultResponse> RegisterProvider(AccountRequest accountRequest)
         {
@@ -28,7 +38,8 @@ namespace Application.Services
                 accountRequest.Username,
                 accountRequest.Password,
                 accountRequest.Phone,
-                email
+                email,
+                accountRequest.Image
             );
 
             var success = await _accountRepository.AddAsync(account);
@@ -54,7 +65,9 @@ namespace Application.Services
                 accountRequest.Username,
                 accountRequest.Password,
                 accountRequest.Phone,
-                email
+                email,
+                accountRequest.Image
+
             );
 
             var success = _accountRepository.UpdateAsync(account);
