@@ -94,7 +94,10 @@ namespace Application.Services
         public async Task<BaseResponse<List<Account>>> GetAllProviders()
         {
 
-            var accounts = await _accountRepository.GetAllAsync();
+            var accounts = await _accountRepository.GetAllAsync(
+                entity => entity.Platform,
+                entity => entity.Email.Provider
+            );
 
             var response = new BaseResponse<List<Account>>()
             {
