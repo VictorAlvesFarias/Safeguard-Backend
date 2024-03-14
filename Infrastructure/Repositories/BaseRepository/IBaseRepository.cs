@@ -13,7 +13,7 @@ namespace Infrastructure.Repositories.BaseRepository
         bool RemoveAsync(TEntity item);
         bool UpdateAsync(TEntity entity);
         Task<TEntity> GetAsync(int id);
-        Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, object>>? include = null);
+        Task<IEnumerable<TEntity>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes);
         Task<IEnumerable<TEntity>> GetAllWhereAsync(Expression<Func<TEntity, bool>> filter);
     }
 }
