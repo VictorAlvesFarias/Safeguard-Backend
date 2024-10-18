@@ -85,11 +85,29 @@ namespace Application.Services.EmailService
         }
         public async Task<BaseResponse<List<Email>>> GetAllEmail()
         {
-            var emails = await _emailRepository.GetAllAsync(x=>x.Provider);
+            var emails =  _emailRepository.GetAll()
+                .Include(e=>e.Provider)
+                .ToList();
 
             var response = new BaseResponse<List<Email>>()
             {
                 Data = emails.ToList(),
+                Success = true
+            };
+
+            return response;
+        }
+        public async Task<BaseResponse<Email>> GetEmailById(int id)
+        {
+
+            var provider = _emailRepository.GetAll()
+                .Where(e => e.Id == id)
+                .Include(e=>e.Provider)
+                .FirstOrDefault();
+
+            var response = new BaseResponse<Email>()
+            {
+                Data = provider,
                 Success = true
             };
 

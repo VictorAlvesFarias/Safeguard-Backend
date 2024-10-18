@@ -16,5 +16,6 @@ namespace Application.Services
         Task<DefaultResponse> Update(PlatformRequest plat, int id);
         Task<DefaultResponse> Delete(int id);
         Task<BaseResponse<List<Platform>>> GetAll();
+        Task<BaseResponse<Platform>> GetPlatformById(int id);
     }
 }

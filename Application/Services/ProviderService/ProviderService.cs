@@ -76,12 +76,25 @@ namespace Application.Services
         public async Task<BaseResponse<List<Provider>>> GetAllProviders()
         {
 
-            var providers = await _providerRepository.GetAllAsync();
+            var providers = _providerRepository.GetAll().ToList();
 
             var response = new BaseResponse<List<Provider>>()
             {
-                Data = providers.ToList(),
+                Data = providers,
                 Success = true 
+            };
+
+            return response;
+        }
+        public async Task<BaseResponse<Provider>> GetProviderById(int id)
+        {
+
+            var provider = await _providerRepository.GetAsync(id);
+
+            var response = new BaseResponse<Provider>()
+            {
+                Data = provider,
+                Success = true
             };
 
             return response;

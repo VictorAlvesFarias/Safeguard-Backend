@@ -15,5 +15,6 @@ namespace Application.Services
          Task<DefaultResponse> UpdateProvider(ProviderRequest provider, int id);
          Task<DefaultResponse> DeleteProvider(int id);
          Task<BaseResponse<List<Provider>>> GetAllProviders();
+         Task<BaseResponse<Provider>> GetProviderById(int id);
     }
 }

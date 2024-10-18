@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20240313145454_InitialCreate2")]
-    partial class InitialCreate2
+    [Migration("20241008194104_InitialCreate2266262")]
+    partial class InitialCreate2266262
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -40,10 +40,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<int>("EmailId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()

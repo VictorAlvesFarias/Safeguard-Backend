@@ -2,6 +2,7 @@
 using Application.Dtos.Provider.Base;
 using Domain.Entitites;
 using Infrastructure.Repositories.BaseRepository;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace Application.Services
         }
 
 
-        public async Task<DefaultResponse> RegisterProvider(AccountRequest accountRequest)
+        public async Task<DefaultResponse> RegisterAccount(AccountRequest accountRequest)
         {
             var email = await _emailRepository.GetAsync(accountRequest.EmailId);
             var plat = await _platformRepository.GetAsync(accountRequest.PlatformId);
@@ -42,7 +43,6 @@ namespace Application.Services
                 accountRequest.Password,
                 accountRequest.Phone,
                 email,
-                accountRequest.Image,
                 plat
             );
 
@@ -58,7 +58,7 @@ namespace Application.Services
 
             return response;
         }
-        public async Task<DefaultResponse> UpdateProvider(AccountRequest accountRequest, int id)
+        public async Task<DefaultResponse> UpdateAccount(AccountRequest accountRequest, int id)
         {
             var account = await _accountRepository.GetAsync(id);
             var email = await _emailRepository.GetAsync(accountRequest.EmailId);
@@ -70,7 +70,6 @@ namespace Application.Services
                 accountRequest.Password,
                 accountRequest.Phone,
                 email,
-                accountRequest.Image,
                 plat
             );
 
@@ -81,7 +80,7 @@ namespace Application.Services
             return response;
 
         }
-        public async Task<DefaultResponse> DeleteProvider(int id)
+        public async Task<DefaultResponse> DeleteAccount(int id)
         {
             var account = await _accountRepository.GetAsync(id);
 
@@ -91,17 +90,34 @@ namespace Application.Services
 
             return response;
         }
-        public async Task<BaseResponse<List<Account>>> GetAllProviders()
+        public async Task<BaseResponse<List<Account>>> GetAllAccounts()
         {
 
-            var accounts = await _accountRepository.GetAllAsync(
-                entity => entity.Platform,
-                entity => entity.Email.Provider
-            );
+            var accounts = _accountRepository.GetAll()
+                .Include(e => e.Platform)
+                .Include(e => e.Email.Provider)
+                .ToList();
 
             var response = new BaseResponse<List<Account>>()
             {
                 Data = accounts.ToList(),
+                Success = true
+            };
+
+            return response;
+        }
+        public async Task<BaseResponse<Account>> GetAccountById(int id)
+        {
+
+            var provider = _accountRepository.GetAll()
+                .Where(e => e.Id == id)
+                .Include(e => e.Platform)
+                .Include(e => e.Email.Provider)
+                .FirstOrDefault();
+
+            var response = new BaseResponse<Account>()
+            {
+                Data = provider,
                 Success = true
             };
 

@@ -57,7 +57,7 @@ namespace ASP.NET_Core_Template.Controllers
         }
 
         [Authorize]
-        [HttpDelete("/delete-account")]
+        [HttpDelete("/delete-user")]
         public async Task<ActionResult<DefaultResponse>> DeleteUser([FromBody] LoginUserRequest loginData)
         {
             var result = await _identityService.DeleteUser(loginData);
@@ -76,7 +76,7 @@ namespace ASP.NET_Core_Template.Controllers
         }
 
         [Authorize]
-        [HttpPut("/update-account")]
+        [HttpPut("/update-user")]
         public async Task<ActionResult<DefaultResponse>> UpdateUser([FromBody] PutUserRequest userData)
         {
             var result = await _identityService.PutUser(userData);

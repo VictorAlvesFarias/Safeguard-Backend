@@ -11,9 +11,10 @@ namespace Application.Services
 {
     public interface IAccountService
     {
-        Task<DefaultResponse> RegisterProvider(AccountRequest provider);
-        Task<DefaultResponse> UpdateProvider(AccountRequest provider, int id);
-        Task<DefaultResponse> DeleteProvider(int id);
-        Task<BaseResponse<List<Account>>> GetAllProviders();
+        Task<DefaultResponse> RegisterAccount(AccountRequest provider);
+        Task<DefaultResponse> UpdateAccount(AccountRequest provider, int id);
+        Task<DefaultResponse> DeleteAccount(int id);
+        Task<BaseResponse<List<Account>>> GetAllAccounts();
+        Task<BaseResponse<Account>> GetAccountById(int id);
     }
 }

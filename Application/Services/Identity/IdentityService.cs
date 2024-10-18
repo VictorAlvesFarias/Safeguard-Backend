@@ -82,7 +82,6 @@ namespace Application.Services.Identity
 
         public async Task<DefaultResponse> AddUser(CreateUserRequest userData)
         {
-
             var user = new ApplicationUser()
             {
                 UserName = userData.Username,
@@ -91,9 +90,7 @@ namespace Application.Services.Identity
                 EmailConfirmed = false,
                 Name = userData.Name,
             };
-
             var createdUser = await _userManager.CreateAsync(user, userData.Password);
-
             var defaultResponse = new DefaultResponse(createdUser.Succeeded);
 
             return defaultResponse;
@@ -219,11 +216,21 @@ namespace Application.Services.Identity
 
         public async Task<ApplicationUser> GetUserByEmailOrUsername(string accessKey) 
         {
+            try
+            {
+
                 var user = IsValidEmail(accessKey) ?
-                    await _userManager.FindByEmailAsync(accessKey) :
+                    await _userManager.FindByEmailAsync(accessKey):
                     await _userManager.FindByNameAsync(accessKey);
 
                 return user;
+
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
         }
 
         public bool IsValidEmail(string email)

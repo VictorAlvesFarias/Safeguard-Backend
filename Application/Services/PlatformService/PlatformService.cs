@@ -73,10 +73,23 @@ namespace Application.Services
         public async Task<BaseResponse<List<Platform>>> GetAll()
         {
 
-            var plats = await _platformRepository.GetAllAsync();
+            var plats = _platformRepository.GetAll().ToList();
             var response = new BaseResponse<List<Platform>>()
             {
-                Data = plats.ToList(),
+                Data = plats,
+                Success = true
+            };
+
+            return response;
+        }
+        public async Task<BaseResponse<Platform>> GetPlatformById(int id)
+        {
+
+            var provider = await _platformRepository.GetAsync(id);
+
+            var response = new BaseResponse<Platform>()
+            {
+                Data = provider,
                 Success = true
             };
 

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class InitialCreate2266262 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -49,6 +49,22 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Platform",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DataCreate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Platform", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -211,7 +227,7 @@ namespace Infrastructure.Migrations
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EmailId = table.Column<int>(type: "int", nullable: false),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PlatformId = table.Column<int>(type: "int", nullable: false),
                     DataCreate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -222,6 +238,12 @@ namespace Infrastructure.Migrations
                         name: "FK_NetworkAccount_Email_EmailId",
                         column: x => x.EmailId,
                         principalTable: "Email",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_NetworkAccount_Platform_PlatformId",
+                        column: x => x.PlatformId,
+                        principalTable: "Platform",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -274,6 +296,11 @@ namespace Infrastructure.Migrations
                 name: "IX_NetworkAccount_EmailId",
                 table: "NetworkAccount",
                 column: "EmailId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_NetworkAccount_PlatformId",
+                table: "NetworkAccount",
+                column: "PlatformId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -304,6 +331,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Email");
+
+            migrationBuilder.DropTable(
+                name: "Platform");
 
             migrationBuilder.DropTable(
                 name: "Provider");

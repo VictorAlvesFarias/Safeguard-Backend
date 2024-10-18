@@ -53,5 +53,11 @@ namespace ASP.NET_Core_Template.Controllers
             }
             
         }
+        [HttpGet("get-email-by-id")]
+        public async Task<ActionResult<BaseResponse<Email>>> GetEmailById(int id)
+        {
+            var result = await _emailService.GetEmailById(id);
+            return result.Result(_controller);
+        }
     }
 }
