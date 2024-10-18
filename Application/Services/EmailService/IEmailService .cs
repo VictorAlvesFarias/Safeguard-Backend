@@ -13,7 +13,8 @@ namespace Application.Services
     {
          Task<DefaultResponse> RegisterEmail(EmailRequest emailRequest);
          Task<DefaultResponse> UpdateEmail(EmailRequest emailRequest, int id);
-        Task<DefaultResponse> DeleteEmail(int id);
+         Task<DefaultResponse> DeleteEmail(int id);
          Task<BaseResponse<List<Email>>> GetAllEmail();
+         Task<BaseResponse<Email>> GetEmailById(int id);
     }
 }

@@ -16,7 +16,7 @@ namespace Domain.Entitites
         public string Phone { get; set; }
         public Email Email { get; set; }
         public Platform Platform { get; set; }
-        public void Create(string _name, string _username, string _password, string _phone, Email _email, string _image , Platform _platform)
+        public void Create(string _name, string _username, string _password, string _phone, Email _email,Platform _platform)
         {
             Name = _name;
             Username = _username;
@@ -25,7 +25,7 @@ namespace Domain.Entitites
             Platform = _platform;
             Phone = _phone;
         }
-        public void Update(string _name, string _username, string _password, string? _phone, Email _email, string _image, Platform _platform)
+        public void Update(string _name, string _username, string _password, string? _phone, Email _email, Platform _platform)
         {
             Name = _name ?? Name;
             Username = _username ?? Username;

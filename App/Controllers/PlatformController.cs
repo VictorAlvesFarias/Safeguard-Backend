@@ -48,5 +48,12 @@ namespace ASP.NET_Core_Template.Controllers
             var result = await _platformService.GetAll();
             return result.Result(_controller);
         }
+
+        [HttpGet("get-platform-by-id")]
+        public async Task<ActionResult<BaseResponse<Platform>>> GetProviderById(int id)
+        {
+            var result = await _platformService.GetPlatformById(id);
+            return result.Result(_controller);
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -13,7 +14,7 @@ namespace Infrastructure.Repositories.BaseRepository
         bool RemoveAsync(TEntity item);
         bool UpdateAsync(TEntity entity);
         Task<TEntity> GetAsync(int id);
-        Task<IEnumerable<TEntity>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes);
-        Task<IEnumerable<TEntity>> GetAllWhereAsync(Expression<Func<TEntity, bool>> filter);
+        IQueryable<TEntity> GetAll();
     }
 }
+

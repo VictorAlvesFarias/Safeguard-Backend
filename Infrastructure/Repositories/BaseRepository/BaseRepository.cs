@@ -76,25 +76,11 @@ namespace Infrastructure.Repositories.BaseRepository
 
             return item;
         }
-        public async Task<IEnumerable<TEntity>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes)
+        public IQueryable<TEntity> GetAll()
         {
             IQueryable<TEntity> query = _entity;
 
-            if (includes != null)
-            {
-                foreach (var include in includes)
-                {
-                    query = query.Include(include);
-                }
-            }
-
-            return await query.AsNoTracking().ToListAsync();
-        }
-        public async Task<IEnumerable<TEntity>> GetAllWhereAsync(Expression<Func<TEntity,bool>> filter)
-        {
-            var result =  _entity.Where(filter) ;
-
-            return result;
+            return query;
         }
     }
 }

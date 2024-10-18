@@ -44,6 +44,12 @@ namespace ASP.NET_Core_Template.Controllers
         {
             var result = await _providerService.GetAllProviders();
             return result.Result(_controller);
-        }        
+        }
+        [HttpGet("get-provider-by-id")]
+        public async Task<ActionResult<BaseResponse<Provider>>> GetProviderById(int id)
+        {
+            var result = await _providerService.GetProviderById(id);
+            return result.Result(_controller);
+        }
     }
 }
