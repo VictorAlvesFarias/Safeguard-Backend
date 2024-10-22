@@ -11,10 +11,10 @@ namespace Application.Services
 {
     public interface IProviderService
     {
-         Task<DefaultResponse> RegisterProvider(ProviderRequest provider);
-         Task<DefaultResponse> UpdateProvider(ProviderRequest provider, int id);
-         Task<DefaultResponse> DeleteProvider(int id);
-         Task<BaseResponse<List<Provider>>> GetAllProviders();
-         Task<BaseResponse<Provider>> GetProviderById(int id);
+         DefaultResponse RegisterProvider(ProviderRequest provider);
+         DefaultResponse UpdateProvider(ProviderRequest provider, int id);
+         DefaultResponse DeleteProvider(int id);
+         BaseResponse<List<Provider>> GetAllProviders();
+         BaseResponse<Provider> GetProviderById(int id);
     }
 }

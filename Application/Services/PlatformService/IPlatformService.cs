@@ -12,10 +12,10 @@ namespace Application.Services
 {
     public interface IPlatformService
     {
-        Task<DefaultResponse> Register(PlatformRequest plat);
-        Task<DefaultResponse> Update(PlatformRequest plat, int id);
-        Task<DefaultResponse> Delete(int id);
-        Task<BaseResponse<List<Platform>>> GetAll();
-        Task<BaseResponse<Platform>> GetPlatformById(int id);
+        DefaultResponse Register(PlatformRequest plat);
+        DefaultResponse Update(PlatformRequest plat, int id);
+        DefaultResponse Delete(int id);
+        BaseResponse<List<Platform>> GetAll();
+        BaseResponse<Platform> GetPlatformById(int id);
     }
 }

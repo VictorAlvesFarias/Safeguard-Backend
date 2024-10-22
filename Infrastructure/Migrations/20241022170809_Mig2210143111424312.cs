@@ -5,10 +5,28 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Migrations
 {
-    public partial class InitialCreate2266262 : Migration
+    public partial class Mig2210143111424312 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "AppFile",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MimeType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Base64 = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppFile", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -43,7 +61,8 @@ namespace Infrastructure.Migrations
                     LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
                     AccessFailedCount = table.Column<int>(type: "int", nullable: false),
-                    DataCreate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -58,13 +77,20 @@ namespace Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DataCreate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ImageId = table.Column<int>(type: "int", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Platform", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Platform_AppFile_ImageId",
+                        column: x => x.ImageId,
+                        principalTable: "AppFile",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -76,13 +102,20 @@ namespace Infrastructure.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Signature = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DataCreate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ImageId = table.Column<int>(type: "int", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Provider", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Provider_AppFile_ImageId",
+                        column: x => x.ImageId,
+                        principalTable: "AppFile",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -202,7 +235,8 @@ namespace Infrastructure.Migrations
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DataCreate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -217,7 +251,7 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "NetworkAccount",
+                name: "Account",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -228,25 +262,34 @@ namespace Infrastructure.Migrations
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EmailId = table.Column<int>(type: "int", nullable: false),
                     PlatformId = table.Column<int>(type: "int", nullable: false),
-                    DataCreate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_NetworkAccount", x => x.Id);
+                    table.PrimaryKey("PK_Account", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_NetworkAccount_Email_EmailId",
+                        name: "FK_Account_Email_EmailId",
                         column: x => x.EmailId,
                         principalTable: "Email",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_NetworkAccount_Platform_PlatformId",
+                        name: "FK_Account_Platform_PlatformId",
                         column: x => x.PlatformId,
                         principalTable: "Platform",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Account_EmailId",
+                table: "Account",
+                column: "EmailId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Account_PlatformId",
+                table: "Account",
+                column: "PlatformId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -293,18 +336,21 @@ namespace Infrastructure.Migrations
                 column: "ProviderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_NetworkAccount_EmailId",
-                table: "NetworkAccount",
-                column: "EmailId");
+                name: "IX_Platform_ImageId",
+                table: "Platform",
+                column: "ImageId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_NetworkAccount_PlatformId",
-                table: "NetworkAccount",
-                column: "PlatformId");
+                name: "IX_Provider_ImageId",
+                table: "Provider",
+                column: "ImageId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Account");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -321,7 +367,10 @@ namespace Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "NetworkAccount");
+                name: "Email");
+
+            migrationBuilder.DropTable(
+                name: "Platform");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -330,13 +379,10 @@ namespace Infrastructure.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Email");
-
-            migrationBuilder.DropTable(
-                name: "Platform");
-
-            migrationBuilder.DropTable(
                 name: "Provider");
+
+            migrationBuilder.DropTable(
+                name: "AppFile");
         }
     }
 }

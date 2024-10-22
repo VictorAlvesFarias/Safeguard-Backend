@@ -11,10 +11,10 @@ namespace Application.Services
 {
     public interface IEmailService
     {
-         Task<DefaultResponse> RegisterEmail(EmailRequest emailRequest);
-         Task<DefaultResponse> UpdateEmail(EmailRequest emailRequest, int id);
-         Task<DefaultResponse> DeleteEmail(int id);
-         Task<BaseResponse<List<Email>>> GetAllEmail();
-         Task<BaseResponse<Email>> GetEmailById(int id);
+         DefaultResponse RegisterEmail(EmailRequest emailRequest);
+         DefaultResponse UpdateEmail(EmailRequest emailRequest, int id);
+         DefaultResponse DeleteEmail(int id);
+         BaseResponse<List<Email>> GetAllEmail();
+         BaseResponse<Email> GetEmailById(int id);
     }
 }

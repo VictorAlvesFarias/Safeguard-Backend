@@ -1,6 +1,7 @@
 ﻿
 using App.Extensions;
 using Application.Services;
+using Application.Services.AppFileService;
 using Application.Services.EmailService;
 using Application.Services.Identity;
 using Domain.Entitites;
@@ -24,6 +25,7 @@ namespace ASP.NET_Core_Template.Ioc
             services.AddScoped<IPlatformService, PlatformService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IAppFileService, AppFileService>();
 
             services.AddCors(options =>
             {

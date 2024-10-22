@@ -1,5 +1,6 @@
 ﻿
 using Infrastructure.Context;
+using Infrastructure.Dtos.Repository.Response;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -23,20 +24,22 @@ namespace Infrastructure.Repositories.BaseRepository
         }
 
 
-        public async Task<bool> AddAsync(TEntity entity)
+        public async Task<RepositoryResponse<TEntity>> AddAsync(TEntity entity)
         {
+            var response = new RepositoryResponse<TEntity>();
             try
             {
-                await _entity.AddAsync(entity);
+                var result = await _entity.AddAsync(entity);
 
                 _context.SaveChanges();
+                response.Result = result.Entity;
+                response.Success = true;
 
-                return true;
+                return response;
             }
             catch
             {
-
-                return false;
+                return response;
             }
         }
         public bool RemoveAsync(TEntity item)
@@ -52,12 +55,13 @@ namespace Infrastructure.Repositories.BaseRepository
 
             catch
             {
-                return false; 
+                return false;
             }
         }
         public bool UpdateAsync(TEntity entity)
         {
-            try {
+            try
+            {
                 _entity.Update(entity);
 
                 _context.SaveChanges();

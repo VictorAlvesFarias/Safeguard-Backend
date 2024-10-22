@@ -9,7 +9,8 @@ namespace Domain.Entitites
 {
     public class BaseEntityIdentity:IdentityUser
     {
-        public DateTime DataCreate { get;  set; }
+        public DateTime CreateDate { get; set; }
+        public DateTime UpdateDate { get; set; }
         public bool Deleted { get;  set; }
     }
 }

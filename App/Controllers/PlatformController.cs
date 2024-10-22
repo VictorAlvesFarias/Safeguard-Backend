@@ -25,34 +25,34 @@ namespace ASP.NET_Core_Template.Controllers
         }
 
         [HttpPost("create-platform")]
-        public async Task<ActionResult<DefaultResponse>> Register([FromBody] PlatformRequest accountRequest)
+        public ActionResult<DefaultResponse> Register([FromForm] PlatformRequest accountRequest)
         {
-            var result = await _platformService.Register(accountRequest);
+            var result = _platformService.Register(accountRequest);
             return result.DefaultResult(_controller);
         }
         [HttpPut("edit-platform")]
-        public async Task<ActionResult<DefaultResponse>> Update([FromBody] PlatformRequest accountRequest, int id)
+        public ActionResult<DefaultResponse> Update([FromForm] PlatformRequest accountRequest, int id)
         {
-            var result = await _platformService.Update(accountRequest, id);
+            var result = _platformService.Update(accountRequest, id);
             return result.DefaultResult(_controller);
         }
         [HttpDelete("delete-platform")]
-        public async Task<ActionResult<DefaultResponse>> Delete(int id)
+        public ActionResult<DefaultResponse> Delete(int id)
         {
-            var result = await _platformService.Delete(id);
+            var result = _platformService.Delete(id);
             return result.DefaultResult(_controller);
         }
         [HttpGet("get-platforms")]
-        public async Task<ActionResult<BaseResponse<List<Platform>>>> GetAll()
+        public ActionResult<BaseResponse<List<Platform>>> GetAll()
         {
-            var result = await _platformService.GetAll();
+            var result = _platformService.GetAll();
             return result.Result(_controller);
         }
 
         [HttpGet("get-platform-by-id")]
-        public async Task<ActionResult<BaseResponse<Platform>>> GetProviderById(int id)
+        public ActionResult<BaseResponse<Platform>> GetProviderById(int id)
         {
-            var result = await _platformService.GetPlatformById(id);
+            var result = _platformService.GetPlatformById(id);
             return result.Result(_controller);
         }
     }

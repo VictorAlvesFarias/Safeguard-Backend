@@ -22,33 +22,33 @@ namespace ASP.NET_Core_Template.Controllers
         }
 
         [HttpPost("create-provider")]
-        public async Task<ActionResult<DefaultResponse>> RegisterProvider([FromBody] ProviderRequest providerRequest)
+        public ActionResult<DefaultResponse> RegisterProvider([FromForm] ProviderRequest providerRequest)
         {
-            var result = await _providerService.RegisterProvider(providerRequest);
+            var result = _providerService.RegisterProvider(providerRequest);
             return result.DefaultResult(_controller);
         }
         [HttpPut("edit-provider")]
-        public async Task<ActionResult<DefaultResponse>> UpdateProvider([FromBody] ProviderRequest providerRequest, int id) 
+        public ActionResult<DefaultResponse> UpdateProvider([FromForm] ProviderRequest providerRequest, int id) 
         {
-            var result = await _providerService.UpdateProvider(providerRequest,id);
+            var result = _providerService.UpdateProvider(providerRequest,id);
             return result.DefaultResult(_controller);
         }
         [HttpDelete("delete-provider")]
-        public async Task<ActionResult<DefaultResponse>> DeleteProvider(int id) 
+        public ActionResult<DefaultResponse> DeleteProvider(int id) 
         {
-            var result = await _providerService.DeleteProvider(id);
+            var result = _providerService.DeleteProvider(id);
             return result.DefaultResult(_controller);
         }
         [HttpGet("get-providers")]
-        public async Task<ActionResult<BaseResponse<List<Provider>>>> GetAllProviders()
+        public ActionResult<BaseResponse<List<Provider>>> GetAllProviders()
         {
-            var result = await _providerService.GetAllProviders();
+            var result = _providerService.GetAllProviders();
             return result.Result(_controller);
         }
         [HttpGet("get-provider-by-id")]
-        public async Task<ActionResult<BaseResponse<Provider>>> GetProviderById(int id)
+        public ActionResult<BaseResponse<Provider>> GetProviderById(int id)
         {
-            var result = await _providerService.GetProviderById(id);
+            var result = _providerService.GetProviderById(id);
             return result.Result(_controller);
         }
     }

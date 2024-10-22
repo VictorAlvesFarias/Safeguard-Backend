@@ -8,8 +8,9 @@ namespace Domain.Entitites
 {
     public class BaseEntity
     {
-        public DateTime DataCreate { get; private set; }
-        public bool Deleted { get; private set; }
+        public DateTime CreateDate { get; protected set; }
+        public DateTime UpdateDate { get; protected set; }
+        public bool Deleted { get; set; }
         public int Id { get; set; }
     }
 }
