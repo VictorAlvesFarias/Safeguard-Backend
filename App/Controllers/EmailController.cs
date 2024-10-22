@@ -19,32 +19,32 @@ namespace ASP.NET_Core_Template.Controllers
         }
 
         [HttpPost("create-email")]
-        public async Task<ActionResult<DefaultResponse>> RegisterProvider([FromBody] EmailRequest emailRequest)
+        public ActionResult<DefaultResponse> RegisterProvider([FromBody] EmailRequest emailRequest)
         {
-            var result = await _emailService.RegisterEmail(emailRequest);
+            var result = _emailService.RegisterEmail(emailRequest);
             return result.DefaultResult(_controller);
         }
 
         [HttpPut("edit-email")]
-        public async Task<ActionResult<DefaultResponse>> UpdateProvider([FromBody] EmailRequest emailRequest, int id)
+        public ActionResult<DefaultResponse> UpdateProvider([FromBody] EmailRequest emailRequest, int id)
         {
-            var result = await _emailService.UpdateEmail(emailRequest, id);
+            var result = _emailService.UpdateEmail(emailRequest, id);
             return result.DefaultResult(_controller);
         }
 
         [HttpDelete("delete-email")]
-        public async Task<ActionResult<DefaultResponse>> DeleteProvider(int id)
+        public ActionResult<DefaultResponse> DeleteProvider(int id)
         {
-            var result = await _emailService.DeleteEmail(id);
+            var result = _emailService.DeleteEmail(id);
             return result.DefaultResult(_controller);
         }
 
         [HttpGet("get-emails")]
-        public async Task<ActionResult<BaseResponse<List<Email>>>> GetAllProviders()
+        public ActionResult<BaseResponse<List<Email>>> GetAllProviders()
         {
             try
             {
-                var result = await _emailService.GetAllEmail();
+                var result = _emailService.GetAllEmail();
                 return result.Result(_controller);
             }
             catch(Exception e)
@@ -54,9 +54,9 @@ namespace ASP.NET_Core_Template.Controllers
             
         }
         [HttpGet("get-email-by-id")]
-        public async Task<ActionResult<BaseResponse<Email>>> GetEmailById(int id)
+        public ActionResult<BaseResponse<Email>> GetEmailById(int id)
         {
-            var result = await _emailService.GetEmailById(id);
+            var result = _emailService.GetEmailById(id);
             return result.Result(_controller);
         }
     }

@@ -1,8 +1,10 @@
 ﻿using Application.Dtos.Default;
 using Application.Dtos.Platform.Base;
 using Application.Dtos.Provider.Base;
+using Application.Services.AppFileService;
 using Domain.Entitites;
 using Infrastructure.Repositories.BaseRepository;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,30 +17,34 @@ namespace Application.Services
     {
 
         private readonly IBaseRepository<Platform> _platformRepository;
+        private readonly IAppFileService _appFilseService;
 
         public PlatformService
         (
-             IBaseRepository<Platform> platformRepository
+            IAppFileService appFilseService,
+            IBaseRepository<Platform> platformRepository
         )
         {
             _platformRepository = platformRepository;
+            _appFilseService = appFilseService;
         }
 
 
-        public async Task<DefaultResponse> Register(PlatformRequest platRequest)
+        public DefaultResponse Register(PlatformRequest platRequest)
         {
 
             var plat = new Platform();
+            var file = _appFilseService.InsertFile(platRequest.Image);
 
             plat.Create(
                 platRequest.Name,
-                platRequest.Image
+                file.Data
             );
 
-            var success = await _platformRepository.AddAsync(plat);
-            var response = new DefaultResponse(success);
+            var addResult = _platformRepository.AddAsync(plat).Result;
+            var response = new DefaultResponse(addResult.Success);
 
-            if (!success)
+            if (!addResult.Success)
             {
                 response.AddError("Não foi possivel completar a operação");
             }
@@ -46,13 +52,14 @@ namespace Application.Services
 
             return response;
         }
-        public async Task<DefaultResponse> Update(PlatformRequest platRequest, int id)
+        public DefaultResponse Update(PlatformRequest platRequest, int id)
         {
-            var plat = await _platformRepository.GetAsync(id);
+            var plat = _platformRepository.GetAsync(id).Result;
+            var file = _appFilseService.InsertFile(platRequest.Image);
 
             plat.Update(
                 platRequest.Name,
-                platRequest.Image
+                file.Data
 
             );
 
@@ -62,18 +69,20 @@ namespace Application.Services
             return response;
 
         }
-        public async Task<DefaultResponse> Delete(int id)
+        public DefaultResponse Delete(int id)
         {
-            var plat = await _platformRepository.GetAsync(id);
+            var plat = _platformRepository.GetAsync(id).Result;
             var success = _platformRepository.RemoveAsync(plat);
             var response = new DefaultResponse(success);
 
             return response;
         }
-        public async Task<BaseResponse<List<Platform>>> GetAll()
+        public BaseResponse<List<Platform>> GetAll()
         {
 
-            var plats = _platformRepository.GetAll().ToList();
+            var plats = _platformRepository.GetAll()
+                .Include(e=>e.Image)
+                .ToList();
             var response = new BaseResponse<List<Platform>>()
             {
                 Data = plats,
@@ -82,10 +91,13 @@ namespace Application.Services
 
             return response;
         }
-        public async Task<BaseResponse<Platform>> GetPlatformById(int id)
+        public BaseResponse<Platform> GetPlatformById(int id)
         {
 
-            var provider = await _platformRepository.GetAsync(id);
+            var provider = _platformRepository.GetAll()
+                .Where(e=>e.Id==id)
+                .Include(e=>e.Image)
+                .FirstOrDefault();
 
             var response = new BaseResponse<Platform>()
             {

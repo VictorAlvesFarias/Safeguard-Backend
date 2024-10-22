@@ -25,33 +25,33 @@ namespace ASP.NET_Core_Template.Controllers
         }
 
         [HttpPost("create-account")]
-        public async Task<ActionResult<DefaultResponse>> RegisterAccount([FromBody] AccountRequest accountRequest)
+        public ActionResult<DefaultResponse> RegisterAccount([FromBody] AccountRequest accountRequest)
         {
-            var result = await _accountService.RegisterAccount(accountRequest);
+            var result = _accountService.RegisterAccount(accountRequest);
             return result.DefaultResult(_controller);
         }
         [HttpPut("edit-account")]
-        public async Task<ActionResult<DefaultResponse>> UpdateAccount([FromBody] AccountRequest accountRequest, int id)
+        public ActionResult<DefaultResponse> UpdateAccount([FromBody] AccountRequest accountRequest, int id)
         {
-            var result = await _accountService.UpdateAccount(accountRequest, id);
+            var result = _accountService.UpdateAccount(accountRequest, id);
             return result.DefaultResult(_controller);
         }
         [HttpDelete("delete-account")]
-        public async Task<ActionResult<DefaultResponse>> DeleteAccount(int id)
+        public ActionResult<DefaultResponse> DeleteAccount(int id)
         {
-            var result = await _accountService.DeleteAccount(id);
+            var result = _accountService.DeleteAccount(id);
             return result.DefaultResult(_controller);
         }
         [HttpGet("get-accounts")]
-        public async Task<ActionResult<BaseResponse<List<Account>>>> GetAllAccounts()
+        public ActionResult<BaseResponse<List<Account>>> GetAllAccounts()
         {
-            var result = await _accountService.GetAllAccounts();
+            var result = _accountService.GetAllAccounts();
             return result.Result(_controller);
         }
         [HttpGet("get-account-by-id")]
-        public async Task<ActionResult<BaseResponse<Account>>> GetEmailById(int id)
+        public ActionResult<BaseResponse<Account>> GetEmailById(int id)
         {
-            var result = await _accountService.GetAccountById(id);
+            var result = _accountService.GetAccountById(id);
             return result.Result(_controller);
         }
     }

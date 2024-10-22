@@ -20,15 +20,15 @@ namespace Application.Services.EmailService
         public EmailService(
             IBaseRepository<Email> emailRepository,
             IBaseRepository<Provider> providerRepository
-)
+        )
         {
             _emailRepository = emailRepository;
             _providerRepository = providerRepository;
         }
 
-        public async Task<DefaultResponse> RegisterEmail(EmailRequest emailRequest)
+        public DefaultResponse RegisterEmail(EmailRequest emailRequest)
         {
-            var provider = await _providerRepository.GetAsync(emailRequest.ProviderId);
+            var provider = _providerRepository.GetAsync(emailRequest.ProviderId).Result;
 
             var email = new Email();
 
@@ -40,11 +40,10 @@ namespace Application.Services.EmailService
                 provider
             );
 
-            var success = await _emailRepository.AddAsync(email);
+            var addResult = _emailRepository.AddAsync(email).Result;
+            var response = new DefaultResponse(addResult.Success);
 
-            var response = new DefaultResponse(success);
-
-            if (!success)
+            if (!addResult.Success)
             {
                 response.AddError("Não foi possivel completar a operação");
             }
@@ -52,11 +51,11 @@ namespace Application.Services.EmailService
 
             return response;
         }
-        public async Task<DefaultResponse> UpdateEmail(EmailRequest emailRequest, int id)
+        public DefaultResponse UpdateEmail(EmailRequest emailRequest, int id)
         {
-            var provider = await _providerRepository.GetAsync(emailRequest.ProviderId);
+            var provider = _providerRepository.GetAsync(emailRequest.ProviderId).Result;
 
-            var email = await _emailRepository.GetAsync(id);
+            var email = _emailRepository.GetAsync(id).Result;
 
             email.Update(
                 emailRequest.Name,
@@ -73,9 +72,9 @@ namespace Application.Services.EmailService
             return response;
 
         }
-        public async Task<DefaultResponse> DeleteEmail(int id)
+        public DefaultResponse DeleteEmail(int id)
         {
-            var provider = await _emailRepository.GetAsync(id);
+            var provider = _emailRepository.GetAsync(id).Result;
 
             var success = _emailRepository.RemoveAsync(provider);
 
@@ -83,10 +82,11 @@ namespace Application.Services.EmailService
 
             return response;
         }
-        public async Task<BaseResponse<List<Email>>> GetAllEmail()
+        public BaseResponse<List<Email>> GetAllEmail()
         {
             var emails =  _emailRepository.GetAll()
                 .Include(e=>e.Provider)
+                .ThenInclude(e => e.Image)
                 .ToList();
 
             var response = new BaseResponse<List<Email>>()
@@ -97,12 +97,13 @@ namespace Application.Services.EmailService
 
             return response;
         }
-        public async Task<BaseResponse<Email>> GetEmailById(int id)
+        public BaseResponse<Email> GetEmailById(int id)
         {
 
             var provider = _emailRepository.GetAll()
                 .Where(e => e.Id == id)
                 .Include(e=>e.Provider)
+                .ThenInclude(e => e.Image)
                 .FirstOrDefault();
 
             var response = new BaseResponse<Email>()

@@ -30,11 +30,11 @@ namespace Application.Services
             _platformRepository = platformRepository; 
         }
 
-
-        public async Task<DefaultResponse> RegisterAccount(AccountRequest accountRequest)
+         
+        public DefaultResponse RegisterAccount(AccountRequest accountRequest)
         {
-            var email = await _emailRepository.GetAsync(accountRequest.EmailId);
-            var plat = await _platformRepository.GetAsync(accountRequest.PlatformId);
+            var email = _emailRepository.GetAsync(accountRequest.EmailId).Result;
+            var plat =  _platformRepository.GetAsync(accountRequest.PlatformId).Result;
             var account = new Account();
 
             account.Create(
@@ -46,11 +46,11 @@ namespace Application.Services
                 plat
             );
 
-            var success = await _accountRepository.AddAsync(account);
+            var addResult =  _accountRepository.AddAsync(account).Result;
 
-            var response = new DefaultResponse(success);
+            var response = new DefaultResponse(addResult.Success);
 
-            if (!success)
+            if (!addResult.Success)
             {
                 response.AddError("Não foi possivel completar a operação");
             }
@@ -58,11 +58,11 @@ namespace Application.Services
 
             return response;
         }
-        public async Task<DefaultResponse> UpdateAccount(AccountRequest accountRequest, int id)
+        public DefaultResponse UpdateAccount(AccountRequest accountRequest, int id)
         {
-            var account = await _accountRepository.GetAsync(id);
-            var email = await _emailRepository.GetAsync(accountRequest.EmailId);
-            var plat = await _platformRepository.GetAsync(accountRequest.PlatformId);
+            var account =  _accountRepository.GetAsync(id).Result;
+            var email =  _emailRepository.GetAsync(accountRequest.EmailId).Result;
+            var plat =  _platformRepository.GetAsync(accountRequest.PlatformId).Result;
 
             account.Update(
                 accountRequest.Name,
@@ -80,22 +80,22 @@ namespace Application.Services
             return response;
 
         }
-        public async Task<DefaultResponse> DeleteAccount(int id)
+        public DefaultResponse DeleteAccount(int id)
         {
-            var account = await _accountRepository.GetAsync(id);
-
-            var success = _accountRepository.RemoveAsync(account);
-
+            var account =  _accountRepository.GetAsync(id);
+            var success = _accountRepository.RemoveAsync(account.Result);
             var response = new DefaultResponse(success);
 
             return response;
         }
-        public async Task<BaseResponse<List<Account>>> GetAllAccounts()
+        public BaseResponse<List<Account>> GetAllAccounts()
         {
 
             var accounts = _accountRepository.GetAll()
                 .Include(e => e.Platform)
+                .ThenInclude(e => e.Image)
                 .Include(e => e.Email.Provider)
+                .ThenInclude(e => e.Image)
                 .ToList();
 
             var response = new BaseResponse<List<Account>>()
@@ -106,13 +106,15 @@ namespace Application.Services
 
             return response;
         }
-        public async Task<BaseResponse<Account>> GetAccountById(int id)
+        public BaseResponse<Account> GetAccountById(int id)
         {
 
             var provider = _accountRepository.GetAll()
                 .Where(e => e.Id == id)
                 .Include(e => e.Platform)
+                .ThenInclude(e => e.Image)
                 .Include(e => e.Email.Provider)
+                .ThenInclude(e => e.Image)
                 .FirstOrDefault();
 
             var response = new BaseResponse<Account>()

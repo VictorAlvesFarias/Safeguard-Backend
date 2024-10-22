@@ -30,8 +30,10 @@ builder.Services.AddSwagger();
 builder.Services.RegisterServices(builder.Configuration);
 
 builder.Services.AddDbContext<ApplicationContext>(opt =>
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-);
+    {
+        var connectionString = $"{builder.Configuration.GetConnectionString("DefaultConnection")}Password={Environment.GetEnvironmentVariable("DEVELOPMENT_DATABASE_KEY")};";
+        opt.UseSqlServer(connectionString);
+    });
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
