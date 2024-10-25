@@ -11,11 +11,11 @@ namespace Domain.Entitites
 {
     public class Provider : BaseEntity
     {
-        public string Name { get; private set; }
-        public string Description { get; private set; }
-        public string Signature { get; private set; }
-        public AppFile Image { get; private set; }
-        public int ImageId { get; private set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Signature { get; set; }
+        public AppFile Image { get; set; }
+        public int ImageId { get; set; }
 
         public void Update(string _name, string _desc, string signature, AppFile _image)
         {
@@ -32,6 +32,7 @@ namespace Domain.Entitites
             Signature = signature;
             Image = _image;
             UpdateDate = DateTime.Now;
+            ImageId = _image.Id;
         }
     }
 }

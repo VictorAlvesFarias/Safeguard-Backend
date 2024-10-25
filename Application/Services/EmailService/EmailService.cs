@@ -41,9 +41,9 @@ namespace Application.Services.EmailService
             );
 
             var addResult = _emailRepository.AddAsync(email).Result;
-            var response = new DefaultResponse(addResult.Success);
+            var response = new DefaultResponse(addResult is not null);
 
-            if (!addResult.Success)
+            if (!response.Success)
             {
                 response.AddError("Não foi possivel completar a operação");
             }

@@ -47,10 +47,9 @@ namespace Application.Services
             );
 
             var addResult =  _accountRepository.AddAsync(account).Result;
+            var response = new DefaultResponse(addResult is not null);
 
-            var response = new DefaultResponse(addResult.Success);
-
-            if (!addResult.Success)
+            if (!response.Success)
             {
                 response.AddError("Não foi possivel completar a operação");
             }

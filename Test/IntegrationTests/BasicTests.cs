@@ -19,7 +19,7 @@ namespace Test.IntegrationTests
                 services.RemoveAll(typeof(DbContextOptions<ApplicationContext>));
                 services.AddDbContext<ApplicationContext>(options =>
                 {
-                    options.UseSqlServer($"{configuration.Configuration.GetConnectionString("DefaultConnectionTest")}Password={Environment.GetEnvironmentVariable("DEVELOPMENT_DATABASE_KEY")};");
+                    options.UseSqlServer($"{configuration.Configuration.GetConnectionString("DefaultConnection")}Password={Environment.GetEnvironmentVariable("DEVELOPMENT_DATABASE_KEY")};");
                 });
             });
 

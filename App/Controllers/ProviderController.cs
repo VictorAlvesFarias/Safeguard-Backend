@@ -22,16 +22,16 @@ namespace ASP.NET_Core_Template.Controllers
         }
 
         [HttpPost("create-provider")]
-        public ActionResult<DefaultResponse> RegisterProvider([FromForm] ProviderRequest providerRequest)
+        public ActionResult<BaseResponse<Provider>> RegisterProvider([FromForm] ProviderRequest providerRequest)
         {
             var result = _providerService.RegisterProvider(providerRequest);
-            return result.DefaultResult(_controller);
+            return result.Result(_controller);
         }
         [HttpPut("edit-provider")]
-        public ActionResult<DefaultResponse> UpdateProvider([FromForm] ProviderRequest providerRequest, int id) 
+        public ActionResult<BaseResponse<Provider>> UpdateProvider([FromForm] ProviderRequest providerRequest, int id) 
         {
             var result = _providerService.UpdateProvider(providerRequest,id);
-            return result.DefaultResult(_controller);
+            return result.Result(_controller);
         }
         [HttpDelete("delete-provider")]
         public ActionResult<DefaultResponse> DeleteProvider(int id) 

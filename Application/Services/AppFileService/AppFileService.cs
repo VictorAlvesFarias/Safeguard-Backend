@@ -35,15 +35,15 @@ namespace Application.Services.AppFileService
             }
                 
             var result = _appFileRepository.AddAsync(file).Result;
-            var response = new BaseResponse<AppFile>(result.Success);
+            var response = new BaseResponse<AppFile>(result is not null);
 
-            if (!result.Success)
+            if (!response.Success)
             {
                 response.AddError("Não foi possivel completar a operação");
             }
             else
             {
-                response.Data = result.Result;
+                response.Data = result;
             }
 
 
