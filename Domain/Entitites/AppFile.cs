@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entitites
 {
-    public class AppFile: BaseEntity
+    public class AppFile: BaseEntityUserRelation
     {
         public string Name { get; set; }
         public string MimeType { get; set; }

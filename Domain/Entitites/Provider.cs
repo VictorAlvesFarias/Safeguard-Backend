@@ -9,14 +9,13 @@ using System.Threading.Tasks;
 
 namespace Domain.Entitites
 {
-    public class Provider : BaseEntity
+    public class Provider : BaseEntityUserRelation
     {
         public string Name { get; set; }
         public string Description { get; set; }
         public string Signature { get; set; }
         public AppFile Image { get; set; }
         public int ImageId { get; set; }
-
         public void Update(string _name, string _desc, string signature, AppFile _image)
         {
             Name = _name??Name;

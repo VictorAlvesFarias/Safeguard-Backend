@@ -1,4 +1,5 @@
 ﻿
+using Domain.Entitites;
 using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -9,9 +10,7 @@ namespace Infrastructure.Repositories.BaseRepository
     //E o tipo TEntity deve ser uma classe, observe no arquivo de Ioc
     public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
-
         private readonly DbSet<TEntity> _entity;
-
         private readonly ApplicationContext _context;
 
         public BaseRepository(
@@ -22,9 +21,18 @@ namespace Infrastructure.Repositories.BaseRepository
             _context = entity;
         }
 
-
         public async Task<TEntity> AddAsync(TEntity entity)
         {
+            if (entity is BaseEntityUserRelation )
+            {
+                var baseEntity = entity as BaseEntityUserRelation;
+                
+                if (baseEntity is not null)
+                {
+                    baseEntity.SetUser(_context.GetUserId());    
+                }
+            }
+
             var result = await _entity.AddAsync(entity);
 
             _context.SaveChanges();
@@ -57,7 +65,15 @@ namespace Infrastructure.Repositories.BaseRepository
         {
             IQueryable<TEntity> query = _entity;
 
+            if (typeof(BaseEntityUserRelation).IsAssignableFrom(typeof(TEntity)))
+            {
+                var userId = _context.GetUserId();
+                var newQuery = query.OfType<BaseEntityUserRelation>() .Where(x => x.UserId == userId).Cast<TEntity>();
+                return newQuery;
+            }
+
             return query;
         }
+
     }
 }

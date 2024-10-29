@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entitites
 {
-    public class Email:BaseEntity
+    public class Email : BaseEntityUserRelation
     {
         public Provider Provider { get; private set; }
         public int ProviderId { get; private set; }

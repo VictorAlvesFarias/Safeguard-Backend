@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.StaticFiles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,18 +12,34 @@ namespace Test.Utils
 {
     public static class TestUtils
     {
-        public static StreamContent CreateStreamFormFile(string contentType)
+        public static StreamContent CreateStreamFormFile(string imagePath)
         {
-            var stream = new MemoryStream();
+            var provider = new FileExtensionContentTypeProvider();
+
+            // Obtém o tipo de conteúdo com base na extensão
+            if (!provider.TryGetContentType(imagePath, out var contentType))
+            {
+                contentType = "application/octet-stream"; // Tipo padrão caso não encontre
+            }
+
+            var stream = File.OpenRead(imagePath);
             var imageContent = new StreamContent(stream);
             imageContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
 
             return imageContent;
         }
-        public static IFormFile CreateFormFile(string contentType)
+        public static IFormFile CreateFormFile(string imagePath)
         {
-            var fileName = "test-image.png";
-            var stream = new MemoryStream();
+            var provider = new FileExtensionContentTypeProvider();
+
+            // Obtém o tipo de conteúdo com base na extensão
+            if (!provider.TryGetContentType(imagePath, out var contentType))
+            {
+                contentType = "application/octet-stream"; // Tipo padrão caso não encontre
+            }
+
+            var fileName = Path.GetFileName(imagePath);
+            var stream = File.OpenRead(imagePath);
             var formFile = new FormFile(stream, 0, stream.Length, "file", fileName)
             {
                 Headers = new HeaderDictionary(),

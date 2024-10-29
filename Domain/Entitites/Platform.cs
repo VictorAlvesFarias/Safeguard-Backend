@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entitites
 {
-    public class Platform:BaseEntity
+    public class Platform : BaseEntityUserRelation
     {
         public string Name { get; private set; }
         public AppFile Image { get; private set; }
