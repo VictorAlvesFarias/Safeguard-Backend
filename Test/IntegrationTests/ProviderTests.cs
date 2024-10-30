@@ -3,6 +3,7 @@ using Application.Dtos.Provider.Base;
 using Domain.Entitites;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using Test.Utils;
 
@@ -13,14 +14,18 @@ namespace Test.IntegrationTests
         private readonly HttpClient _client;
         private readonly BasicTests _factory;
         private readonly JsonSerializerOptions _jsonOptions;
+        private readonly UserTests _userTests;
         public ProviderTests(BasicTests factory)
         {
+            _userTests = new UserTests(factory);
             _factory = factory;
             _client = factory.CreateClient(new WebApplicationFactoryClientOptions
             {
-                AllowAutoRedirect = false,
+                AllowAutoRedirect = false, 
+
             });
-            _jsonOptions = new JsonSerializerOptions
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _userTests.User_Login().Result.Data.Token);
+            _jsonOptions = new JsonSerializerOptions()
             {
                 PropertyNameCaseInsensitive = true,
             };
@@ -35,7 +40,7 @@ namespace Test.IntegrationTests
                 Signature = "teat",
                 Image = TestUtils.CreateFormFile("Assets/POST.png")
             };
-            var createProviderResponse = await _client.PostAsync("/create-provider",TestUtils.ToFormData(newProvider));
+            var createProviderResponse = await _client.PostAsync("/create-provider",newProvider.ToFormData());
             var providerString = await createProviderResponse.Content.ReadAsStringAsync();
             var provider = JsonSerializer.Deserialize<BaseResponse<Provider>>(providerString, _jsonOptions);
 
@@ -62,7 +67,7 @@ namespace Test.IntegrationTests
                 Signature = "teat",
                 Image = TestUtils.CreateFormFile("Assets/PUT.png")
             };
-            var updateProviderResponse = await _client.PutAsync(@$"/edit-provider?id={provider.Id}", TestUtils.ToFormData(newProviderUpdate));
+            var updateProviderResponse = await _client.PutAsync(@$"/edit-provider?id={provider.Id}", newProviderUpdate.ToFormData());
             var updateProviderString = await updateProviderResponse.Content.ReadAsStringAsync();
             var updateProvider = JsonSerializer.Deserialize<BaseResponse<Provider>>(updateProviderString, _jsonOptions);
 

@@ -12,8 +12,8 @@ namespace Application.Services
 {
     public interface IPlatformService
     {
-        DefaultResponse Register(PlatformRequest plat);
-        DefaultResponse Update(PlatformRequest plat, int id);
+        BaseResponse<Platform> Register(PlatformRequest plat);
+        BaseResponse<Platform> Update(PlatformRequest plat, int id);
         DefaultResponse Delete(int id);
         BaseResponse<List<Platform>> GetAll();
         BaseResponse<Platform> GetPlatformById(int id);

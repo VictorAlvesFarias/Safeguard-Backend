@@ -1,8 +1,10 @@
 ﻿using Application.Dtos.Default;
-using Application.Dtos.Provider.Base;
+using Application.Dtos.Platform.Base;
+using Application.Dtos.Platform.Base;
 using Domain.Entitites;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using Test.Utils;
 
@@ -13,13 +15,16 @@ namespace Test.IntegrationTests
         private readonly HttpClient _client;
         private readonly BasicTests _factory;
         private readonly JsonSerializerOptions _jsonOptions;
+        private readonly UserTests _userTests;
         public PlatformTests(BasicTests factory)
         {
+            _userTests = new UserTests(factory);
             _factory = factory;
             _client = factory.CreateClient(new WebApplicationFactoryClientOptions
             {
                 AllowAutoRedirect = false,
             });
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _userTests.User_Login().Result.Data.Token);
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
@@ -27,75 +32,66 @@ namespace Test.IntegrationTests
         }
     
         [Fact]
-        public async Task<BaseResponse<Provider>> Post_Platform()
+        public async Task<BaseResponse<Platform>> Post_Platform()
         {
-            var newProvider = new ProviderRequest() {
-                Description = "Teste",
+            var newPlatform = new PlatformRequest() {
                 Name = "Teste",
-                Signature = "teat",
                 Image = TestUtils.CreateFormFile("Assets/POST.png")
             };
-            var createProviderResponse = await _client.PostAsync("/create-provider",TestUtils.ToFormData(newProvider));
-            var providerString = await createProviderResponse.Content.ReadAsStringAsync();
-            var provider = JsonSerializer.Deserialize<BaseResponse<Provider>>(providerString, _jsonOptions);
+            var createPlatformResponse = await _client.PostAsync("/create-platform", TestUtils.ToFormData(newPlatform));
+            var platformString = await createPlatformResponse.Content.ReadAsStringAsync();
+            var platform = JsonSerializer.Deserialize<BaseResponse<Platform>>(platformString, _jsonOptions);
 
-            Assert.Equal(HttpStatusCode.OK, createProviderResponse.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, createPlatformResponse.StatusCode);
 
-            return provider;
+            return platform;
         }
         [Fact]
         public async Task Delete_Platform()
         {
-            var provider = Post_Platform().Result.Data;
-            var deleteProviderResponse = await _client.DeleteAsync(@$"/delete-provider?id={provider.Id}");
+            var platform = Post_Platform().Result.Data;
+            var deletePlatformResponse = await _client.DeleteAsync(@$"/delete-platform?id={platform.Id}");
 
-            Assert.Equal(HttpStatusCode.OK, deleteProviderResponse.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, deletePlatformResponse.StatusCode);
         }
         [Fact]
         public async Task Update_Platform()
         {
-            var provider = Post_Platform().Result.Data;
-            var newProviderUpdate = new ProviderRequest()
+            var platform = Post_Platform().Result.Data;
+            var newPlatformUpdate = new PlatformRequest()
             {
-                Description = "Teste",
                 Name = "Teste",
-                Signature = "teat",
                 Image = TestUtils.CreateFormFile("Assets/PUT.png")
             };
-            var expectedProvider = new Provider();
+            var expectedPlatform = new Platform();
             var appFile = new AppFile();
 
             using (var memoryStream = new MemoryStream())
             {
-                newProviderUpdate.Image.OpenReadStream().CopyTo(memoryStream);
+                newPlatformUpdate.Image.OpenReadStream().CopyTo(memoryStream);
                 var base64Image = Convert.ToBase64String(memoryStream.ToArray());
 
                 appFile.Create(
-                    newProviderUpdate.Image.FileName,
-                    newProviderUpdate.Image.ContentType,
+                    newPlatformUpdate.Image.FileName,
+                    newPlatformUpdate.Image.ContentType,
                     base64Image
                 );
             }
 
-            expectedProvider.Create(
-                newProviderUpdate.Name,
-                newProviderUpdate.Description,
-                newProviderUpdate.Signature,
+            expectedPlatform.Create(
+                newPlatformUpdate.Name,
                 appFile
             );
 
-            var updateProviderResponse = await _client.PutAsync(@$"/edit-provider?id={provider.Id}", TestUtils.ToFormData(newProviderUpdate));
-            var updateProviderString = await updateProviderResponse.Content.ReadAsStringAsync();
-            var updateProvider = JsonSerializer.Deserialize<BaseResponse<Provider>>(updateProviderString, _jsonOptions);
+            var updatePlatformResponse = await _client.PutAsync(@$"/edit-platform?id={platform.Id}", TestUtils.ToFormData(newPlatformUpdate));
+            var updatePlatformString = await updatePlatformResponse.Content.ReadAsStringAsync();
+            var updatePlatform = JsonSerializer.Deserialize<BaseResponse<Platform>>(updatePlatformString, _jsonOptions);
 
-            expectedProvider.Image.Id = updateProvider.Data.Image.Id;
-            expectedProvider.Id = updateProvider.Data.Id;
-            expectedProvider.ImageId = updateProvider.Data.ImageId;
+            expectedPlatform.Image.Id = updatePlatform.Data.Image.Id;
+            expectedPlatform.Id = updatePlatform.Data.Id;
 
-            Assert.Equal(expectedProvider.Name, updateProvider.Data.Name);
-            Assert.Equal(expectedProvider.Description, updateProvider.Data.Description);
-            Assert.Equal(expectedProvider.Signature, updateProvider.Data.Signature);
-            Assert.Equal(expectedProvider.ImageId, updateProvider.Data.ImageId);
+            Assert.Equal(expectedPlatform.Name, updatePlatform.Data.Name);
+            Assert.NotEqual(expectedPlatform.ImageId, updatePlatform.Data.ImageId);
         }
     }
 }

@@ -30,7 +30,7 @@ namespace Application.Services
         }
 
 
-        public DefaultResponse Register(PlatformRequest platRequest)
+        public BaseResponse<Platform> Register(PlatformRequest platRequest)
         {
 
             var plat = new Platform();
@@ -42,7 +42,9 @@ namespace Application.Services
             );
 
             var addResult = _platformRepository.AddAsync(plat).Result;
-            var response = new DefaultResponse(addResult is not null);
+            var response = new BaseResponse<Platform>(addResult is not null);
+
+            response.Data = addResult;
 
             if (response.Success)
             {
@@ -52,7 +54,7 @@ namespace Application.Services
 
             return response;
         }
-        public DefaultResponse Update(PlatformRequest platRequest, int id)
+        public BaseResponse<Platform> Update(PlatformRequest platRequest, int id)
         {
             var plat = _platformRepository.GetAsync(id).Result;
             var file = _appFilseService.InsertFile(platRequest.Image);
@@ -64,7 +66,14 @@ namespace Application.Services
             );
 
             var success = _platformRepository.UpdateAsync(plat);
-            var response = new DefaultResponse(success);
+            var response = new BaseResponse<Platform>(success);
+
+            response.Data = plat;
+
+            if (response.Success)
+            {
+                response.AddError("Não foi possivel completar a operação");
+            }
 
             return response;
 

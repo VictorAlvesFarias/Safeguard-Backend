@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Test.Utils
@@ -48,7 +49,7 @@ namespace Test.Utils
 
             return formFile;
         }
-        public static MultipartFormDataContent ToFormData(object obj)
+        public static MultipartFormDataContent ToFormData(this object obj)
         {
             var formData = new MultipartFormDataContent();
 
@@ -79,6 +80,16 @@ namespace Test.Utils
             }
 
             return formData;
+        }
+        public static StringContent ToJson(this object obj)
+        {
+            var jsonContent = new StringContent(
+               JsonSerializer.Serialize(obj),
+               Encoding.UTF8,
+               "application/json"
+           );
+
+           return jsonContent;
         }
     }
 }

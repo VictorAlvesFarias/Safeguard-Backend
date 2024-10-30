@@ -26,10 +26,9 @@ namespace Application.Services.EmailService
             _providerRepository = providerRepository;
         }
 
-        public DefaultResponse RegisterEmail(EmailRequest emailRequest)
+        public BaseResponse<Email> RegisterEmail(EmailRequest emailRequest)
         {
             var provider = _providerRepository.GetAsync(emailRequest.ProviderId).Result;
-
             var email = new Email();
 
             email.Create(
@@ -41,7 +40,9 @@ namespace Application.Services.EmailService
             );
 
             var addResult = _emailRepository.AddAsync(email).Result;
-            var response = new DefaultResponse(addResult is not null);
+            var response = new BaseResponse<Email>(addResult is not null);
+
+            response.Data = addResult;
 
             if (!response.Success)
             {
@@ -51,10 +52,9 @@ namespace Application.Services.EmailService
 
             return response;
         }
-        public DefaultResponse UpdateEmail(EmailRequest emailRequest, int id)
+        public BaseResponse<Email> UpdateEmail(EmailRequest emailRequest, int id)
         {
             var provider = _providerRepository.GetAsync(emailRequest.ProviderId).Result;
-
             var email = _emailRepository.GetAsync(id).Result;
 
             email.Update(
@@ -65,9 +65,15 @@ namespace Application.Services.EmailService
                 provider
             );
 
-            var success = _emailRepository.UpdateAsync(email);
+            var result = _emailRepository.UpdateAsync(email);
+            var response = new BaseResponse<Email>(result);
 
-            var response = new DefaultResponse(success);
+            response.Data = email;
+
+            if (!response.Success)
+            {
+                response.AddError("Não foi possivel completar a operação");
+            }
 
             return response;
 

@@ -9,9 +9,9 @@ namespace Domain.Entitites
 {
     public class Platform : BaseEntityUserRelation
     {
-        public string Name { get; private set; }
-        public AppFile Image { get; private set; }
-        public int ImageId { get; private set; }
+        public string Name { get; set; }
+        public AppFile Image { get; set; }
+        public int ImageId { get; set; }
 
         public void Update(string _name, AppFile _image)
         {

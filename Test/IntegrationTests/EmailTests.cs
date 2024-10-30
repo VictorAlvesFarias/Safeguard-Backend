@@ -3,6 +3,7 @@ using Application.Dtos.Provider.Base;
 using Domain.Entitites;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using Test.Utils;
 
@@ -14,14 +15,17 @@ namespace Test.IntegrationTests
         private readonly BasicTests _factory;
         private readonly JsonSerializerOptions _jsonOptions;
         private readonly ProviderTests _providerTests;
+        private readonly UserTests _userTests;
         public EmailTests(BasicTests factory)
         {
             _providerTests = new ProviderTests(factory);
+            _userTests = new UserTests(factory);
             _factory = factory;
             _client = factory.CreateClient(new WebApplicationFactoryClientOptions
             {
                 AllowAutoRedirect = false,
-            });
+            }); 
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _userTests.User_Login().Result.Data.Token);
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
@@ -39,7 +43,7 @@ namespace Test.IntegrationTests
                 Username = "teste",
                 ProviderId = provider.Data.Id
             };
-            var createEmailResponse = await _client.PostAsync("/create-email",TestUtils.ToFormData(newEmail));
+            var createEmailResponse = await _client.PostAsync("/create-email",newEmail.ToJson());
             var emailString = await createEmailResponse.Content.ReadAsStringAsync();
             var email = JsonSerializer.Deserialize<BaseResponse<Email>>(emailString, _jsonOptions);
 
@@ -68,15 +72,15 @@ namespace Test.IntegrationTests
                 Username = "teste 2",
                 ProviderId = provider.Data.Id
             };
-            var updateEmailResponse = await _client.PutAsync(@$"/edit-email?id={email.Data.Id}", TestUtils.ToFormData(newEmailUpdate));
+            var updateEmailResponse = await _client.PutAsync(@$"/edit-email?id={email.Data.Id}", newEmailUpdate.ToJson());
             var updateEmailString = await updateEmailResponse.Content.ReadAsStringAsync();
-            var updateEmail = JsonSerializer.Deserialize<BaseResponse<Email>>(updateEmailString, _jsonOptions);
+            var updatedEmail = JsonSerializer.Deserialize<BaseResponse<Email>>(updateEmailString, _jsonOptions);
 
-            Assert.Equal(newEmailUpdate.Name, updateEmail.Data.Name);
-            Assert.Equal(newEmailUpdate.ProviderId, updateEmail.Data.ProviderId);
-            Assert.Equal(newEmailUpdate.Username, updateEmail.Data.Username);
-            Assert.Equal(newEmailUpdate.Password, updateEmail.Data.Password);
-            Assert.Equal(newEmailUpdate.Phone, updateEmail.Data.Phone);
+            Assert.Equal(newEmailUpdate.Name, updatedEmail.Data.Name);
+            Assert.Equal(newEmailUpdate.ProviderId, updatedEmail.Data.ProviderId);
+            Assert.Equal(newEmailUpdate.Username, updatedEmail.Data.Username);
+            Assert.Equal(newEmailUpdate.Password, updatedEmail.Data.Password);
+            Assert.Equal(newEmailUpdate.Phone, updatedEmail.Data.Phone);
         }
     }
 }

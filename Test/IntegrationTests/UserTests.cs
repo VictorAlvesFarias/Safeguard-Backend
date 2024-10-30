@@ -13,17 +13,19 @@ using Domain.Entitites;
 using System.Net;
 using Test.Utils;
 using System.Text.Json;
+using System.Text;
+using System.Net.Http.Headers;
 
 namespace Test.IntegrationTests
 {
-    public class UserTests: WebApplicationFactory<Program>
+    public class UserTests : IClassFixture<BasicTests>
     {
         private readonly HttpClient _client;
         private readonly BasicTests _factory;
         private readonly JsonSerializerOptions _jsonOptions;
         public UserTests(BasicTests factory)
         {
-            _factory = factory;
+           _factory = factory;
             _client = factory.CreateClient(new WebApplicationFactoryClientOptions
             {
                 AllowAutoRedirect = false,
@@ -34,39 +36,20 @@ namespace Test.IntegrationTests
             };
         }
         [Fact]
-        public async Task<BaseResponse<Provider>> User_Login()
+        public async Task<BaseResponse<LoginUserResponse>> User_Login()
         {
             var newLogin = new LoginUserRequest()
             {
                 AccessKey = "userTest@gmail.com",
                 Password = "Teste123*"
             };
-            var loginResponse = await _client.PostAsync("/create-user", TestUtils.ToFormData(newLogin));
+            var loginResponse = await _client.PostAsync("/sign-in", newLogin.ToJson());
             var loginString = await loginResponse.Content.ReadAsStringAsync();
-            var login = JsonSerializer.Deserialize<BaseResponse<Provider>>(loginString, _jsonOptions);
+            var login = JsonSerializer.Deserialize<BaseResponse<LoginUserResponse>>(loginString, _jsonOptions);
 
             Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
 
             return login;
-        }
-        [Fact]
-        public async Task<BaseResponse<LoginUserResponse>> Create_User()
-        {
-            var newUser = new CreateUserRequest()
-            {
-                Email = "user.test@gmail.com",
-                Name = "User Test",
-                Username = "usertest",
-                PasswordConfirm = "Teste123*",
-                Password = "Teste123*"
-            };
-            var createUserResponse = await _client.PostAsync("/create-user", TestUtils.ToFormData(newUser));
-            var userString = await createUserResponse.Content.ReadAsStringAsync();
-            var user = JsonSerializer.Deserialize<BaseResponse<LoginUserResponse>>(userString, _jsonOptions);
-
-            Assert.Equal(HttpStatusCode.OK, createUserResponse.StatusCode);
-
-            return user;
         }
     }
 }

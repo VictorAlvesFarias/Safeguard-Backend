@@ -25,16 +25,16 @@ namespace ASP.NET_Core_Template.Controllers
         }
 
         [HttpPost("create-platform")]
-        public ActionResult<DefaultResponse> Register([FromForm] PlatformRequest accountRequest)
+        public ActionResult<BaseResponse<Platform>> Register([FromForm] PlatformRequest accountRequest)
         {
             var result = _platformService.Register(accountRequest);
-            return result.DefaultResult(_controller);
+            return result.Result(_controller);
         }
         [HttpPut("edit-platform")]
-        public ActionResult<DefaultResponse> Update([FromForm] PlatformRequest accountRequest, int id)
+        public ActionResult<BaseResponse<Platform>> Update([FromForm] PlatformRequest accountRequest, int id)
         {
             var result = _platformService.Update(accountRequest, id);
-            return result.DefaultResult(_controller);
+            return result.Result(_controller);
         }
         [HttpDelete("delete-platform")]
         public ActionResult<DefaultResponse> Delete(int id)

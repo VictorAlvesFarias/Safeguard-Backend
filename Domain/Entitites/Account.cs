@@ -10,12 +10,12 @@ namespace Domain.Entitites
 {
     public class Account: BaseEntityUserRelation
     {
-        public string Password { get; private set; }
-        public string Name { get; private set; }
-        public string Username { get; private set; }
-        public string Phone { get; private set; }
-        public Email Email { get; private set; }
-        public int EmailId{ get; private set; }
+        public string Password { get; set; }
+        public string Name { get; set; }
+        public string Username { get; set; }
+        public string Phone { get; set; }
+        public Email Email { get; set; }
+        public int EmailId{ get; set; }
         public Platform Platform { get; set; }
         public int PlatformId { get; set; }
         public void Update(string _name, string _username, string _password, string? _phone, Email _email, Platform _platform)

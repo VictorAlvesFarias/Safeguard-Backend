@@ -11,8 +11,8 @@ namespace Application.Services
 {
     public interface IAccountService
     {
-        DefaultResponse RegisterAccount(AccountRequest provider);
-        DefaultResponse UpdateAccount(AccountRequest provider, int id);
+        BaseResponse<Account> RegisterAccount(AccountRequest provider);
+        BaseResponse<Account> UpdateAccount(AccountRequest provider, int id);
         DefaultResponse DeleteAccount(int id);
         BaseResponse<List<Account>> GetAllAccounts();
         BaseResponse<Account> GetAccountById(int id);
