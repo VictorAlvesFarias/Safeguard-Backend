@@ -16,22 +16,21 @@ namespace Domain.Entitites
         public string Signature { get; set; }
         public AppFile Image { get; set; }
         public int ImageId { get; set; }
-        public void Update(string _name, string _desc, string signature, AppFile _image)
+        public void Update(string _name, string _desc, string signature, int _imageId = 0)
         {
             Name = _name??Name;
             Description = _desc??Description;
             Signature = signature??Signature;
-            Image = _image??Image;
+            ImageId = _imageId == 0 ? ImageId : _imageId;
             UpdateDate = DateTime.Now;
         }
-        public void Create(string _name, string _desc, string signature, AppFile _image)
+        public void Create(string _name, string _desc, string signature, int _image = 0)
         {
             Name = _name;
             Description = _desc;
             Signature = signature;
-            Image = _image;
+            ImageId = _image;
             UpdateDate = DateTime.Now;
-            ImageId = _image.Id;
         }
     }
 }

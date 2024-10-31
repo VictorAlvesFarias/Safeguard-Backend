@@ -13,16 +13,16 @@ namespace Domain.Entitites
         public AppFile Image { get; set; }
         public int ImageId { get; set; }
 
-        public void Update(string _name, AppFile _image)
+        public void Update(string _name, int _imageId = 0)
         {
             Name = _name ?? Name;
-            Image = _image ?? Image;
+            ImageId = _imageId == 0 ? ImageId: _imageId;
             UpdateDate = DateTime.Now;
         }
-        public void Create(string _name, AppFile _image)
+        public void Create(string _name, int _imageId = 0)
         {
             Name = _name;
-            Image = _image;
+            ImageId = _imageId == 0 ? ImageId : _imageId;
             CreateDate = DateTime.Now;
         }
     }

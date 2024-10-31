@@ -13,6 +13,7 @@ namespace Infrastructure.Repositories.BaseRepository
     {
         Task<TEntity> AddAsync(TEntity entity);
         bool RemoveAsync(TEntity item);
+        bool RemoveAsync(int id);
         bool UpdateAsync(TEntity entity);
         Task<TEntity> GetAsync(int id);
         IQueryable<TEntity> GetAll();

@@ -34,11 +34,10 @@ namespace Application.Services
         {
 
             var plat = new Platform();
-            var file = _appFilseService.InsertFile(platRequest.Image);
 
             plat.Create(
                 platRequest.Name,
-                file.Data
+                platRequest.ImageId
             );
 
             var addResult = _platformRepository.AddAsync(plat).Result;
@@ -57,12 +56,10 @@ namespace Application.Services
         public BaseResponse<Platform> Update(PlatformRequest platRequest, int id)
         {
             var plat = _platformRepository.GetAsync(id).Result;
-            var file = _appFilseService.InsertFile(platRequest.Image);
 
             plat.Update(
                 platRequest.Name,
-                file.Data
-
+                platRequest.ImageId
             );
 
             var success = _platformRepository.UpdateAsync(plat);
@@ -90,6 +87,7 @@ namespace Application.Services
         {
 
             var plats = _platformRepository.GetAll()
+                .OrderByDescending(e => e.Id)
                 .Include(e=>e.Image)
                 .ToList();
             var response = new BaseResponse<List<Platform>>()

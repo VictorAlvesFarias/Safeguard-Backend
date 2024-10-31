@@ -46,6 +46,33 @@ namespace Application.Services.AppFileService
                 response.Data = result;
             }
 
+            return response;
+        }
+        public DefaultResponse DeleteFile(int id)
+        {
+            var result = _appFileRepository.RemoveAsync(id);
+            var response = new DefaultResponse(result);
+
+            if (!response.Success)
+            {
+                response.AddError("Não foi possivel completar a operação");
+            }
+
+            return response;
+        }
+        public BaseResponse<List<AppFile>> GetFiles()
+        {
+
+            var result = _appFileRepository.GetAll().OrderByDescending(e=>e.Id).ToList();
+            var response = new BaseResponse<List<AppFile>>(result is not null);
+
+            if (!response.Success)
+            {
+                response.AddError("Não foi possivel completar a operação");
+            }
+            else {
+                response.Data = result;
+            }
 
             return response;
         }

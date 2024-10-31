@@ -47,6 +47,13 @@ namespace Infrastructure.Repositories.BaseRepository
 
             return true;
         }
+        public bool RemoveAsync(int id)
+        {
+            _context.Remove (_entity.FindAsync(id).Result);
+            _context.SaveChanges();
+
+            return true;
+        }
         public bool UpdateAsync(TEntity entity)
         {
             _entity.Update(entity);

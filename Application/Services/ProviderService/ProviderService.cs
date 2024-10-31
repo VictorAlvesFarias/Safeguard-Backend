@@ -31,13 +31,12 @@ namespace Application.Services
         public BaseResponse<Provider> RegisterProvider(ProviderRequest providerRequest)
         {
             var newProvider = new Provider();
-            var file = _appFileService.InsertFile(providerRequest.Image);
 
             newProvider.Create(
                 providerRequest.Name,
                 providerRequest.Description,
                 providerRequest.Signature,
-                file.Data
+                providerRequest.ImageId
             );
 
             var provider = _providerRepository.AddAsync(newProvider).Result;
@@ -60,13 +59,11 @@ namespace Application.Services
                 .Where(e=>id == e.Id)
                 .FirstOrDefault();
 
-            var file = _appFileService.InsertFile(providerRequest.Image);
-
             provider.Update(
                 providerRequest.Name,
                 providerRequest.Description,
                 providerRequest.Signature,
-                file.Data
+                providerRequest.ImageId
             );
 
             var success =  _providerRepository.UpdateAsync(provider);
@@ -89,6 +86,7 @@ namespace Application.Services
         {
 
             var providers = _providerRepository.GetAll()
+                .OrderByDescending(e => e.Id)
                 .Include(e => e.Image)
                 .ToList();
 
