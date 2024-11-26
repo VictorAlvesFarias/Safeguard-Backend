@@ -7,5 +7,7 @@ namespace Application.Services.AppFileService
     public interface IAppFileService
     {
         BaseResponse<AppFile>  InsertFile(IFormFile req);
+        DefaultResponse DeleteFile(int id);
+        BaseResponse<List<AppFile>> GetFiles();
     }
 }

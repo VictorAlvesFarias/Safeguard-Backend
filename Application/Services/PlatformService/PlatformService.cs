@@ -30,21 +30,22 @@ namespace Application.Services
         }
 
 
-        public DefaultResponse Register(PlatformRequest platRequest)
+        public BaseResponse<Platform> Register(PlatformRequest platRequest)
         {
 
             var plat = new Platform();
-            var file = _appFilseService.InsertFile(platRequest.Image);
 
             plat.Create(
                 platRequest.Name,
-                file.Data
+                platRequest.ImageId
             );
 
             var addResult = _platformRepository.AddAsync(plat).Result;
-            var response = new DefaultResponse(addResult.Success);
+            var response = new BaseResponse<Platform>(addResult is not null);
 
-            if (!addResult.Success)
+            response.Data = addResult;
+
+            if (response.Success)
             {
                 response.AddError("Não foi possivel completar a operação");
             }
@@ -52,19 +53,24 @@ namespace Application.Services
 
             return response;
         }
-        public DefaultResponse Update(PlatformRequest platRequest, int id)
+        public BaseResponse<Platform> Update(PlatformRequest platRequest, int id)
         {
             var plat = _platformRepository.GetAsync(id).Result;
-            var file = _appFilseService.InsertFile(platRequest.Image);
 
             plat.Update(
                 platRequest.Name,
-                file.Data
-
+                platRequest.ImageId
             );
 
             var success = _platformRepository.UpdateAsync(plat);
-            var response = new DefaultResponse(success);
+            var response = new BaseResponse<Platform>(success);
+
+            response.Data = plat;
+
+            if (response.Success)
+            {
+                response.AddError("Não foi possivel completar a operação");
+            }
 
             return response;
 
@@ -81,6 +87,7 @@ namespace Application.Services
         {
 
             var plats = _platformRepository.GetAll()
+                .OrderByDescending(e => e.Id)
                 .Include(e=>e.Image)
                 .ToList();
             var response = new BaseResponse<List<Platform>>()

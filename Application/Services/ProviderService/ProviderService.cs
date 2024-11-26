@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Application.Services
 {
-    public class ProviderService:IProviderService
+    public class ProviderService : IProviderService
     {
         public readonly IBaseRepository<Provider> _providerRepository;
         private readonly IAppFileService _appFileService;
@@ -28,23 +28,23 @@ namespace Application.Services
             _appFileService = appFileService;
         }
 
-        public DefaultResponse RegisterProvider(ProviderRequest providerRequest)
+        public BaseResponse<Provider> RegisterProvider(ProviderRequest providerRequest)
         {
-            var provider = new Provider();
-            var file = _appFileService.InsertFile(providerRequest.Image);
+            var newProvider = new Provider();
 
-            provider.Create(
+            newProvider.Create(
                 providerRequest.Name,
                 providerRequest.Description,
                 providerRequest.Signature,
-                file.Data
+                providerRequest.ImageId
             );
 
-            var addResult = _providerRepository.AddAsync(provider).Result;
+            var provider = _providerRepository.AddAsync(newProvider).Result;
+            var response = new BaseResponse<Provider>(newProvider is not null);
 
-            var response = new DefaultResponse(addResult.Success);
-            
-            if(!addResult.Success)
+            response.Data = provider;
+
+            if (!response.Success)
             {
                 response.AddError("Não foi possivel completar a operação");
             }
@@ -52,21 +52,24 @@ namespace Application.Services
 
             return response;
         }
-        public DefaultResponse UpdateProvider(ProviderRequest providerRequest, int id)
+        public BaseResponse<Provider> UpdateProvider(ProviderRequest providerRequest, int id)
         {
-            var provider = _providerRepository.GetAsync(id).Result;
-            var file = _appFileService.InsertFile(providerRequest.Image);
+            var provider = _providerRepository.GetAll()
+                .Include(e=>e.Image)
+                .Where(e=>id == e.Id)
+                .FirstOrDefault();
 
             provider.Update(
                 providerRequest.Name,
                 providerRequest.Description,
                 providerRequest.Signature,
-                file.Data
+                providerRequest.ImageId
             );
 
             var success =  _providerRepository.UpdateAsync(provider);
+            var response = new BaseResponse<Provider>(success);
 
-            var response = new DefaultResponse(success);
+            response.Data = provider;
 
             return response;
 
@@ -74,9 +77,7 @@ namespace Application.Services
         public DefaultResponse DeleteProvider(int id)
         {
             var provider = _providerRepository.GetAsync(id).Result;
-
-            var success =  _providerRepository.RemoveAsync(provider);
-
+            var success = _providerRepository.RemoveAsync(provider);
             var response = new DefaultResponse(success);
 
             return response;
@@ -85,6 +86,7 @@ namespace Application.Services
         {
 
             var providers = _providerRepository.GetAll()
+                .OrderByDescending(e => e.Id)
                 .Include(e => e.Image)
                 .ToList();
 

@@ -25,16 +25,16 @@ namespace ASP.NET_Core_Template.Controllers
         }
 
         [HttpPost("create-account")]
-        public ActionResult<DefaultResponse> RegisterAccount([FromBody] AccountRequest accountRequest)
+        public ActionResult<BaseResponse<Account>> RegisterAccount([FromBody] AccountRequest accountRequest)
         {
             var result = _accountService.RegisterAccount(accountRequest);
-            return result.DefaultResult(_controller);
+            return result.Result(_controller);
         }
         [HttpPut("edit-account")]
-        public ActionResult<DefaultResponse> UpdateAccount([FromBody] AccountRequest accountRequest, int id)
+        public ActionResult<BaseResponse<Account>> UpdateAccount([FromBody] AccountRequest accountRequest, int id)
         {
             var result = _accountService.UpdateAccount(accountRequest, id);
-            return result.DefaultResult(_controller);
+            return result.Result(_controller);
         }
         [HttpDelete("delete-account")]
         public ActionResult<DefaultResponse> DeleteAccount(int id)

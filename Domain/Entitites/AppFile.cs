@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Domain.Entitites
 {
-    public class AppFile: BaseEntity
+    public class AppFile: BaseEntityUserRelation
     {
-        public string Name { get; private set; }
-        public string MimeType { get; private set; }
-        public string Base64 { get; private set; }
+        public string Name { get; set; }
+        public string MimeType { get; set; }
+        public string Base64 { get; set; }
         public void Update(string _name, string _mimeType, string _base64)
         {
             Name = _name??Name;

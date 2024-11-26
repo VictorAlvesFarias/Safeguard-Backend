@@ -13,7 +13,7 @@ namespace Application.Dtos.Provider.Base
         public string Name { get; set; }
         public string Description { get; set; }
         public string Signature { get; set; }
-        public IFormFile Image { get; set; }
+        public int ImageId { get; set; }
     }
 }
 

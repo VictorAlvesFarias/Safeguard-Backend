@@ -11,8 +11,8 @@ namespace Application.Services
 {
     public interface IEmailService
     {
-         DefaultResponse RegisterEmail(EmailRequest emailRequest);
-         DefaultResponse UpdateEmail(EmailRequest emailRequest, int id);
+         BaseResponse<Email> RegisterEmail(EmailRequest emailRequest);
+         BaseResponse<Email> UpdateEmail(EmailRequest emailRequest, int id);
          DefaultResponse DeleteEmail(int id);
          BaseResponse<List<Email>> GetAllEmail();
          BaseResponse<Email> GetEmailById(int id);

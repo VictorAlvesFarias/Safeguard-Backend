@@ -39,6 +39,5 @@ namespace Application.Dtos.Default
 
             return controller.StatusCode(StatusCodes.Status500InternalServerError);
         }
-
     }
 }
