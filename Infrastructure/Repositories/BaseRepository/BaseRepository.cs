@@ -81,6 +81,5 @@ namespace Infrastructure.Repositories.BaseRepository
 
             return query;
         }
-
     }
 }

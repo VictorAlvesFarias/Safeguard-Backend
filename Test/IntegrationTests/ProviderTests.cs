@@ -15,9 +15,11 @@ namespace Test.IntegrationTests
         private readonly BasicTests _factory;
         private readonly JsonSerializerOptions _jsonOptions;
         private readonly UserTests _userTests;
+        private readonly AppFileTests _appFileTests;
         public ProviderTests(BasicTests factory)
         {
             _userTests = new UserTests(factory);
+            _appFileTests = new AppFileTests(factory);
             _factory = factory;
             _client = factory.CreateClient(new WebApplicationFactoryClientOptions
             {
@@ -34,11 +36,12 @@ namespace Test.IntegrationTests
         [Fact]
         public async Task<BaseResponse<Provider>> Post_Provider()
         {
+            var image = await _appFileTests.Post_File_Post();
             var newProvider = new ProviderRequest() {
                 Description = "Teste",
                 Name = "Teste",
                 Signature = "teat",
-                Image = TestUtils.CreateFormFile("Assets/POST.png")
+                ImageId = image.Data.Id   
             };
             var createProviderResponse = await _client.PostAsync("/create-provider",newProvider.ToFormData());
             var providerString = await createProviderResponse.Content.ReadAsStringAsync();
@@ -60,12 +63,13 @@ namespace Test.IntegrationTests
         public async Task Update_Provider()
         {
             var provider = Post_Provider().Result.Data;
+            var image = await _appFileTests.Post_File_Put();
             var newProviderUpdate = new ProviderRequest()
             {
                 Description = "Teste",
                 Name = "Teste",
                 Signature = "teat",
-                Image = TestUtils.CreateFormFile("Assets/PUT.png")
+                ImageId = image.Data.Id
             };
             var updateProviderResponse = await _client.PutAsync(@$"/edit-provider?id={provider.Id}", newProviderUpdate.ToFormData());
             var updateProviderString = await updateProviderResponse.Content.ReadAsStringAsync();

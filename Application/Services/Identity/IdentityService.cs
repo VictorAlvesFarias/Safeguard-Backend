@@ -217,11 +217,18 @@ namespace Application.Services.Identity
         }
         public async Task<ApplicationUser> GetUserByEmailOrUsername(string accessKey) 
         {
-            var user = IsValidEmail(accessKey) ?
-                await _userManager.FindByEmailAsync(accessKey):
-                await _userManager.FindByNameAsync(accessKey);
+            if (IsValidEmail(accessKey))
+            {
+                var response = await _userManager.FindByEmailAsync(accessKey);
+        
+                return response;
+            }
+            else
+            {
+                var response = await _userManager.FindByNameAsync(accessKey);
 
-            return user;
+                return response;
+            }
         }
         public bool IsValidEmail(string email)
         {

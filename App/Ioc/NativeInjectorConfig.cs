@@ -43,7 +43,9 @@ namespace ASP.NET_Core_Template.Ioc
             services.AddDbContext<ApplicationContext>(opt =>
             {
                 var connectionString = $"{configuration.GetConnectionString("DefaultConnection")}Password={Environment.GetEnvironmentVariable("DEVELOPMENT_DATABASE_KEY")};";
-                opt.UseSqlServer(connectionString);
+                var connectionStringSqLite = "Data Source = App.db";
+
+                opt.UseSqlite(connectionStringSqLite);
             });
         }
     }

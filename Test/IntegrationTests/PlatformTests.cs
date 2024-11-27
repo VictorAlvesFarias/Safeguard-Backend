@@ -1,6 +1,5 @@
 ﻿using Application.Dtos.Default;
 using Application.Dtos.Platform.Base;
-using Application.Dtos.Platform.Base;
 using Domain.Entitites;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
@@ -16,8 +15,11 @@ namespace Test.IntegrationTests
         private readonly BasicTests _factory;
         private readonly JsonSerializerOptions _jsonOptions;
         private readonly UserTests _userTests;
+        private readonly AppFileTests _appFileTests;
+
         public PlatformTests(BasicTests factory)
         {
+            _appFileTests = new AppFileTests(factory);
             _userTests = new UserTests(factory);
             _factory = factory;
             _client = factory.CreateClient(new WebApplicationFactoryClientOptions
@@ -34,9 +36,10 @@ namespace Test.IntegrationTests
         [Fact]
         public async Task<BaseResponse<Platform>> Post_Platform()
         {
+            var image = await _appFileTests.Post_File_Post();
             var newPlatform = new PlatformRequest() {
                 Name = "Teste",
-                Image = TestUtils.CreateFormFile("Assets/POST.png")
+                ImageId = image.Data.Id
             };
             var createPlatformResponse = await _client.PostAsync("/create-platform", TestUtils.ToFormData(newPlatform));
             var platformString = await createPlatformResponse.Content.ReadAsStringAsync();
@@ -58,40 +61,19 @@ namespace Test.IntegrationTests
         public async Task Update_Platform()
         {
             var platform = Post_Platform().Result.Data;
+            var image = await _appFileTests.Post_File_Put();
             var newPlatformUpdate = new PlatformRequest()
             {
                 Name = "Teste",
-                Image = TestUtils.CreateFormFile("Assets/PUT.png")
+                ImageId = image.Data.Id
             };
-            var expectedPlatform = new Platform();
-            var appFile = new AppFile();
 
-            using (var memoryStream = new MemoryStream())
-            {
-                newPlatformUpdate.Image.OpenReadStream().CopyTo(memoryStream);
-                var base64Image = Convert.ToBase64String(memoryStream.ToArray());
-
-                appFile.Create(
-                    newPlatformUpdate.Image.FileName,
-                    newPlatformUpdate.Image.ContentType,
-                    base64Image
-                );
-            }
-
-            expectedPlatform.Create(
-                newPlatformUpdate.Name,
-                appFile
-            );
-
-            var updatePlatformResponse = await _client.PutAsync(@$"/edit-platform?id={platform.Id}", TestUtils.ToFormData(newPlatformUpdate));
+            var updatePlatformResponse = await _client.PutAsync(@$"/edit-platform?id={platform.Id}", newPlatformUpdate.ToFormData());
             var updatePlatformString = await updatePlatformResponse.Content.ReadAsStringAsync();
             var updatePlatform = JsonSerializer.Deserialize<BaseResponse<Platform>>(updatePlatformString, _jsonOptions);
 
-            expectedPlatform.Image.Id = updatePlatform.Data.Image.Id;
-            expectedPlatform.Id = updatePlatform.Data.Id;
-
-            Assert.Equal(expectedPlatform.Name, updatePlatform.Data.Name);
-            Assert.NotEqual(expectedPlatform.ImageId, updatePlatform.Data.ImageId);
+            Assert.Equal(newPlatformUpdate.Name, updatePlatform.Data.Name);
+            Assert.NotEqual(platform.ImageId, updatePlatform.Data.ImageId);
         }
     }
 }
