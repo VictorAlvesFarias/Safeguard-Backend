@@ -43,7 +43,9 @@ namespace Application.Services
                 accountRequest.Password,
                 accountRequest.Phone,
                 email,
-                plat
+                plat,
+                accountRequest.LastName,
+                accountRequest.BirthDate
             );
 
             var addResult =  _accountRepository.AddAsync(account).Result;
@@ -70,7 +72,9 @@ namespace Application.Services
                 accountRequest.Password,
                 accountRequest.Phone,
                 email,
-                plat
+                plat,
+                accountRequest.LastName,
+                accountRequest.BirthDate
             );
 
             var result = _accountRepository.UpdateAsync(account);

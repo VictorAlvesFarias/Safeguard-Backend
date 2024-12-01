@@ -36,7 +36,9 @@ namespace Application.Services.EmailService
                 emailRequest.Username,
                 emailRequest.Password,
                 emailRequest.Phone,
-                provider
+                provider,
+                emailRequest.LastName,
+                emailRequest.BirthDate
             );
 
             var addResult = _emailRepository.AddAsync(email).Result;
@@ -62,7 +64,9 @@ namespace Application.Services.EmailService
                 emailRequest.Username,
                 emailRequest.Password,
                 emailRequest.Phone,
-                provider
+                provider,
+                emailRequest.LastName,
+                emailRequest.BirthDate
             );
 
             var result = _emailRepository.UpdateAsync(email);
