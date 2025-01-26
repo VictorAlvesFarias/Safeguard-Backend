@@ -1,6 +1,6 @@
 ﻿
+using Domain.Entitites;
 using Infrastructure.Context;
-using Infrastructure.Dtos.Repository.Response;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -10,9 +10,7 @@ namespace Infrastructure.Repositories.BaseRepository
     //E o tipo TEntity deve ser uma classe, observe no arquivo de Ioc
     public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
-
         private readonly DbSet<TEntity> _entity;
-
         private readonly ApplicationContext _context;
 
         public BaseRepository(
@@ -23,56 +21,46 @@ namespace Infrastructure.Repositories.BaseRepository
             _context = entity;
         }
 
-
-        public async Task<RepositoryResponse<TEntity>> AddAsync(TEntity entity)
+        public async Task<TEntity> AddAsync(TEntity entity)
         {
-            var response = new RepositoryResponse<TEntity>();
-            try
+            if (entity is BaseEntityUserRelation )
             {
-                var result = await _entity.AddAsync(entity);
-
-                _context.SaveChanges();
-                response.Result = result.Entity;
-                response.Success = true;
-
-                return response;
+                var baseEntity = entity as BaseEntityUserRelation;
+                
+                if (baseEntity is not null)
+                {
+                    baseEntity.SetUser(_context.GetUserId());    
+                }
             }
-            catch
-            {
-                return response;
-            }
+
+            var result = await _entity.AddAsync(entity);
+
+            _context.SaveChanges();
+
+            return result.Entity;
         }
         public bool RemoveAsync(TEntity item)
         {
-            try
-            {
-                _context.Remove(item);
+            _context.Remove(item);
 
-                _context.SaveChanges();
+            _context.SaveChanges();
 
-                return true;
-            }
+            return true;
+        }
+        public bool RemoveAsync(int id)
+        {
+            _context.Remove (_entity.FindAsync(id).Result);
+            _context.SaveChanges();
 
-            catch
-            {
-                return false;
-            }
+            return true;
         }
         public bool UpdateAsync(TEntity entity)
         {
-            try
-            {
-                _entity.Update(entity);
+            _entity.Update(entity);
 
-                _context.SaveChanges();
+            _context.SaveChanges();
 
-                return true;
-            }
-            catch
-            {
-
-                return false;
-            }
+            return true;
         }
         public async Task<TEntity> GetAsync(int id)
         {
@@ -83,6 +71,13 @@ namespace Infrastructure.Repositories.BaseRepository
         public IQueryable<TEntity> GetAll()
         {
             IQueryable<TEntity> query = _entity;
+
+            if (typeof(BaseEntityUserRelation).IsAssignableFrom(typeof(TEntity)))
+            {
+                var userId = _context.GetUserId();
+                var newQuery = query.OfType<BaseEntityUserRelation>() .Where(x => x.UserId == userId).Cast<TEntity>();
+                return newQuery;
+            }
 
             return query;
         }

@@ -9,28 +9,27 @@ using System.Threading.Tasks;
 
 namespace Domain.Entitites
 {
-    public class Provider : BaseEntity
+    public class Provider : BaseEntityUserRelation
     {
-        public string Name { get; private set; }
-        public string Description { get; private set; }
-        public string Signature { get; private set; }
-        public AppFile Image { get; private set; }
-        public int ImageId { get; private set; }
-
-        public void Update(string _name, string _desc, string signature, AppFile _image)
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Signature { get; set; }
+        public AppFile Image { get; set; }
+        public int ImageId { get; set; }
+        public void Update(string _name, string _desc, string signature, int _imageId = 0)
         {
             Name = _name??Name;
             Description = _desc??Description;
             Signature = signature??Signature;
-            Image = _image??Image;
+            ImageId = _imageId == 0 ? ImageId : _imageId;
             UpdateDate = DateTime.Now;
         }
-        public void Create(string _name, string _desc, string signature, AppFile _image)
+        public void Create(string _name, string _desc, string signature, int _image = 0)
         {
             Name = _name;
             Description = _desc;
             Signature = signature;
-            Image = _image;
+            ImageId = _image;
             UpdateDate = DateTime.Now;
         }
     }

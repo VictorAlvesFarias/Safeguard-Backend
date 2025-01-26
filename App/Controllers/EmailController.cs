@@ -19,17 +19,17 @@ namespace ASP.NET_Core_Template.Controllers
         }
 
         [HttpPost("create-email")]
-        public ActionResult<DefaultResponse> RegisterProvider([FromBody] EmailRequest emailRequest)
+        public ActionResult<BaseResponse<Email>> RegisterProvider([FromBody] EmailRequest emailRequest)
         {
             var result = _emailService.RegisterEmail(emailRequest);
-            return result.DefaultResult(_controller);
+            return result.Result(_controller);
         }
 
         [HttpPut("edit-email")]
-        public ActionResult<DefaultResponse> UpdateProvider([FromBody] EmailRequest emailRequest, int id)
+        public ActionResult<BaseResponse<Email>> UpdateProvider([FromBody] EmailRequest emailRequest, int id)
         {
             var result = _emailService.UpdateEmail(emailRequest, id);
-            return result.DefaultResult(_controller);
+            return result.Result(_controller);
         }
 
         [HttpDelete("delete-email")]

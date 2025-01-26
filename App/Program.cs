@@ -2,22 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using ASP.NET_Core_Template.Ioc;
 using Infrastructure.Context;
 using PicEnfermagem.Api.Extensions;
+using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: "AllowedCorsOrigins",
-        builder =>
-        {
-            builder
-                .AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        });
-});
 
 builder.Services.AddControllers();
 
@@ -29,11 +16,6 @@ builder.Services.AddSwagger();
 
 builder.Services.RegisterServices(builder.Configuration);
 
-builder.Services.AddDbContext<ApplicationContext>(opt =>
-    {
-        var connectionString = $"{builder.Configuration.GetConnectionString("DefaultConnection")}Password={Environment.GetEnvironmentVariable("DEVELOPMENT_DATABASE_KEY")};";
-        opt.UseSqlServer(connectionString);
-    });
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -53,3 +35,8 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+namespace App.Program
+{
+    public partial class Program { }
+}

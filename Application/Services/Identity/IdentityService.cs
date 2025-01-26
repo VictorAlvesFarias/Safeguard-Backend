@@ -18,13 +18,9 @@ namespace Application.Services.Identity
     public class IdentityService : IIdentityService
     {
         private readonly ApplicationContext _context;
-
         private readonly SignInManager<ApplicationUser> _singInManager;
-
         private readonly UserManager<ApplicationUser> _userManager;
-
         private readonly JwtOptions _jwtOptions;
-
         private readonly string _userId;
 
         public IdentityService(
@@ -37,7 +33,7 @@ namespace Application.Services.Identity
             _singInManager = signInManager;
             _userManager = userManager;
             _jwtOptions = jwtOptions.Value;
-            _userId = _context._contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            _userId = _context.GetUserId();
         }
 
         public async Task<DefaultResponse> PutUser(PutUserRequest userData)
@@ -79,9 +75,15 @@ namespace Application.Services.Identity
                 return response;
             }
         }
-
         public async Task<DefaultResponse> AddUser(CreateUserRequest userData)
         {
+            var validateEmail = await ValidateEmailAsync(userData.Email);
+            
+            if (!validateEmail.Success)
+            {
+                return validateEmail;
+            }
+
             var user = new ApplicationUser()
             {
                 UserName = userData.Username,
@@ -92,10 +94,14 @@ namespace Application.Services.Identity
             };
             var createdUser = await _userManager.CreateAsync(user, userData.Password);
             var defaultResponse = new DefaultResponse(createdUser.Succeeded);
+            
+            if (!defaultResponse.Success)
+            {
+                defaultResponse.AddErrors(createdUser.Errors.ToList().ConvertAll<string>(item => item.Description));
+            }
 
             return defaultResponse;
         }
-
         public async Task<DefaultResponse> DeleteUser(LoginUserRequest loginData)
         {
             var user = await GetUserByEmailOrUsername(loginData.AccessKey);
@@ -118,7 +124,6 @@ namespace Application.Services.Identity
                 return response;
             }
         }
-
         public async Task<DefaultResponse> ValidateEmailAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
@@ -137,7 +142,6 @@ namespace Application.Services.Identity
                 return response;
             }
         }
-
         public async Task<BaseResponse<LoginUserResponse>> LoginAsync(LoginUserRequest loginData)
         {
             var user = await GetUserByEmailOrUsername(loginData.AccessKey);
@@ -151,7 +155,7 @@ namespace Application.Services.Identity
                 response.Data = new()
                 {
                     Email = user.Email,
-                    ExpectedExpirationTokenDateTime = DateTime.UtcNow ,  
+                    ExpectedExpirationTokenDateTime = DateTime.UtcNow.AddSeconds(3600) ,  
                     Name = user.Name,   
                     Username = user.UserName,
                     ExpirationTokenTime = _jwtOptions.AccessTokenExpiration,
@@ -169,7 +173,6 @@ namespace Application.Services.Identity
                 return response;
             }
         }
-
         public async Task<IList<Claim>> GetClaimsAndRoles(ApplicationUser user)
         {
             var claims = await _userManager.GetClaimsAsync(user);
@@ -193,7 +196,6 @@ namespace Application.Services.Identity
 
             return claims;
         }
-
         public async Task<string> CreateToken(ApplicationUser user)
         {
             var claims = await GetClaimsAndRoles(user);
@@ -213,26 +215,21 @@ namespace Application.Services.Identity
 
             return token;
         }
-
         public async Task<ApplicationUser> GetUserByEmailOrUsername(string accessKey) 
         {
-            try
+            if (IsValidEmail(accessKey))
             {
-
-                var user = IsValidEmail(accessKey) ?
-                    await _userManager.FindByEmailAsync(accessKey):
-                    await _userManager.FindByNameAsync(accessKey);
-
-                return user;
-
+                var response = await _userManager.FindByEmailAsync(accessKey);
+        
+                return response;
             }
-            catch (Exception e)
+            else
             {
+                var response = await _userManager.FindByNameAsync(accessKey);
 
-                throw;
+                return response;
             }
         }
-
         public bool IsValidEmail(string email)
         {
             string pattern = @"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$";
@@ -240,7 +237,6 @@ namespace Application.Services.Identity
 
             return regex.IsMatch(email);
         }
-
         public async Task<DefaultResponse> ValidateUsernameAsync(string email)
         {
             var user = await _userManager.FindByNameAsync(email);
@@ -259,7 +255,6 @@ namespace Application.Services.Identity
                 return response;
             }
         }
-
         public async Task<DefaultResponse> ChangePasswordAsync(ChangePasswordRequest changePasswordData)
         {
             var user = await _userManager.FindByIdAsync(_userId);

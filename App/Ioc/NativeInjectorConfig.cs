@@ -27,6 +27,11 @@ namespace ASP.NET_Core_Template.Ioc
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IAppFileService, AppFileService>();
 
+            services.AddDefaultIdentity<ApplicationUser>()
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationContext>()
+                .AddDefaultTokenProviders();
+
             services.AddCors(options =>
             {
               options.AddPolicy("AllowedCorsOrigins",
@@ -35,13 +40,14 @@ namespace ASP.NET_Core_Template.Ioc
                   .AllowAnyMethod()
                   .AllowAnyHeader());
             });
-
-            services.AddDefaultIdentity<ApplicationUser>()
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationContext>()
-                .AddDefaultTokenProviders();
-
             services.AddAuthentication(configuration);
+            services.AddDbContext<ApplicationContext>(opt =>
+            {
+                var connectionString = $"{configuration.GetConnectionString("DefaultConnection")}Password={Environment.GetEnvironmentVariable("DEVELOPMENT_DATABASE_KEY")};";
+                var connectionStringSqLite = "Data Source = App.db";
+
+                opt.UseSqlite(connectionStringSqLite);
+            });
         }
     }
 }
