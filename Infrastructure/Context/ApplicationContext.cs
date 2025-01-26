@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 
 namespace Infrastructure.Context
@@ -19,6 +20,10 @@ namespace Infrastructure.Context
             : base(options)
         {
             _contextAccessor = contextAccessor;
+        }
+        public string GetUserId()
+        {
+            return _contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -49,6 +54,36 @@ namespace Infrastructure.Context
                 .HasOne(e => e.Platform)
                 .WithMany()
                 .HasForeignKey(e => e.PlatformId)
+                .OnDelete(DeleteBehavior.NoAction);
+            //-----------------------------------------------
+            modelBuilder.Entity<Account>()
+                .HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e=>e.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Email>()
+                .HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<AppFile>()
+                .HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Platform>()
+                .HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Provider>()
+                .HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
         }
 
