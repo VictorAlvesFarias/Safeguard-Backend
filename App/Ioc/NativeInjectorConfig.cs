@@ -8,7 +8,9 @@ using Domain.Entitites;
 using Infrastructure.Context;
 using Infrastructure.Repositories.BaseRepository;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using PicEnfermagem.Api.Extensions;
+using Safeguard.Services;
 
 namespace ASP.NET_Core_Template.Ioc
 {
