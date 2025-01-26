@@ -4,18 +4,21 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using System.Security.Claims;
 
 
 namespace Infrastructure.Context
 {
     public class ApplicationContext : IdentityDbContext<ApplicationUser>
     {
-        public readonly IHttpContextAccessor _contextAccessor;
-        public DbSet<Provider> Provider { get; set; }
-        public DbSet<Email> Email { get; set; }
-        public DbSet<Account> Account { get; set; }
-        public DbSet<AppFile> AppFile { get; set; }
-        public DbSet<Platform> Platform { get; set; }
+        private readonly IHttpContextAccessor _contextAccessor;
+        protected DbSet<Provider> Provider { get; set; }
+        protected DbSet<Email> Email { get; set; }
+        protected DbSet<Account> Account { get; set; }
+        protected DbSet<AppFile> AppFile { get; set; }
+        protected DbSet<Platform> Platform { get; set; }
+        protected DbSet<RecoveryKey> RecoveryKey { get; set; }
+        protected DbSet<RecoveryEmail> RecoveryEmail { get; set; }
         public ApplicationContext(DbContextOptions<ApplicationContext> options, IHttpContextAccessor contextAccessor)
             : base(options)
         {

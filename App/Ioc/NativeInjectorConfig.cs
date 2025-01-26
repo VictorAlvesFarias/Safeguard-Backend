@@ -19,15 +19,15 @@ namespace ASP.NET_Core_Template.Ioc
         //Injeção das dependecias
         public static void RegisterServices( this IServiceCollection services, IConfiguration configuration)
         {   
-            //Ele está adicionando o tipe expecificado ao escopo, ja que a interface TEntity não pode ser chamada aqui
             services.AddScoped(typeof(IBaseRepository<>),typeof(BaseRepository<>));
-
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IProviderService, ProviderService>();
             services.AddScoped<IPlatformService, PlatformService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IAppFileService, AppFileService>();
+            services.AddScoped<IRecoveryKeyService, RecoveryKeyService>();
+            services.AddScoped<IRecoveryEmailService, RecoveryEmailService>();
 
             services.AddDefaultIdentity<ApplicationUser>()
                 .AddRoles<IdentityRole>()
@@ -36,11 +36,11 @@ namespace ASP.NET_Core_Template.Ioc
 
             services.AddCors(options =>
             {
-              options.AddPolicy("AllowedCorsOrigins",
-              builder => builder
-                  .AllowAnyOrigin()
-                  .AllowAnyMethod()
-                  .AllowAnyHeader());
+                options.AddPolicy("AllowedCorsOrigins",
+                builder => builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
             });
             services.AddAuthentication(configuration);
             services.AddDbContext<ApplicationContext>(opt =>
