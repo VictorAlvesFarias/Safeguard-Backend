@@ -1,4 +1,4 @@
-﻿using Infrastructure.Dtos.Repository.Response;
+﻿using Domain.Entitites;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,8 +11,9 @@ namespace Infrastructure.Repositories.BaseRepository
 {
     public interface IBaseRepository<TEntity> where TEntity : class
     {
-        Task<RepositoryResponse<TEntity>> AddAsync(TEntity entity);
+        Task<TEntity> AddAsync(TEntity entity);
         bool RemoveAsync(TEntity item);
+        bool RemoveAsync(int id);
         bool UpdateAsync(TEntity entity);
         Task<TEntity> GetAsync(int id);
         IQueryable<TEntity> GetAll();

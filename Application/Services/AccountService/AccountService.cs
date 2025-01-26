@@ -31,7 +31,7 @@ namespace Application.Services
         }
 
          
-        public DefaultResponse RegisterAccount(AccountRequest accountRequest)
+        public BaseResponse<Account> RegisterAccount(AccountRequest accountRequest)
         {
             var email = _emailRepository.GetAsync(accountRequest.EmailId).Result;
             var plat =  _platformRepository.GetAsync(accountRequest.PlatformId).Result;
@@ -43,22 +43,24 @@ namespace Application.Services
                 accountRequest.Password,
                 accountRequest.Phone,
                 email,
-                plat
+                plat,
+                accountRequest.LastName,
+                accountRequest.BirthDate
             );
 
             var addResult =  _accountRepository.AddAsync(account).Result;
+            var response = new BaseResponse<Account>(addResult is not null);
 
-            var response = new DefaultResponse(addResult.Success);
+            response.Data = addResult;
 
-            if (!addResult.Success)
+            if (!response.Success)
             {
                 response.AddError("Não foi possivel completar a operação");
             }
 
-
             return response;
         }
-        public DefaultResponse UpdateAccount(AccountRequest accountRequest, int id)
+        public BaseResponse<Account> UpdateAccount(AccountRequest accountRequest, int id)
         {
             var account =  _accountRepository.GetAsync(id).Result;
             var email =  _emailRepository.GetAsync(accountRequest.EmailId).Result;
@@ -70,12 +72,20 @@ namespace Application.Services
                 accountRequest.Password,
                 accountRequest.Phone,
                 email,
-                plat
+                plat,
+                accountRequest.LastName,
+                accountRequest.BirthDate
             );
 
-            var success = _accountRepository.UpdateAsync(account);
+            var result = _accountRepository.UpdateAsync(account);
+            var response = new BaseResponse<Account>(result);
 
-            var response = new DefaultResponse(success);
+            response.Data = account;
+
+            if (!response.Success)
+            {
+                response.AddError("Não foi possivel completar a operação");
+            }
 
             return response;
 
