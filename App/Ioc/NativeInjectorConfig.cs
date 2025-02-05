@@ -45,10 +45,10 @@ namespace ASP.NET_Core_Template.Ioc
             services.AddAuthentication(configuration);
             services.AddDbContext<ApplicationContext>(opt =>
             {
-                var connectionString = $"{configuration.GetConnectionString("DefaultConnection")}Password={Environment.GetEnvironmentVariable("DEVELOPMENT_DATABASE_KEY")};";
-                var connectionStringSqLite = "Data Source = App.db";
+                //var connectionString = $"{configuration.GetConnectionString("DefaultConnection")}Password={Environment.GetEnvironmentVariable("DEVELOPMENT_DATABASE_KEY")};";
+                var connectionString = $"{configuration.GetConnectionString("DefaultConnection")};";
 
-                opt.UseSqlite(connectionStringSqLite);
+                opt.UseSqlite(connectionString);
             });
         }
     }

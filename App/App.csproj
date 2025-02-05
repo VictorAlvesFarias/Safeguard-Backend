@@ -26,7 +26,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="App.db">
+    <Folder Include="Db\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Db\App.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
