@@ -18,37 +18,37 @@ The Safeguard API is the backend core of the Safeguard ecosystem, enabling secur
 ##  Project Structure
 
 ```sh
-	┌── App
-    │   ├── App.csproj
-    │   ├── appsettings.Development.json
-    │   ├── appsettings.json
-    │   ├── Configuration
-    │   ├── Controllers
-    │   ├── Db
-    │   ├── Extensions
-    │   ├── Ioc
-    │   ├── Program.cs
-    │   └── Properties
-    ├── Application
-    │   ├── Application.csproj
-    │   ├── Configuration
-    │   ├── Dtos
-    │   └── Services
-    ├── docker-compose.yml
-    ├── Dockerfile
-    ├── Domain
-    │   ├── Domain.csproj
-    │   ├── Interfaces
-    │   └── Entities
-    ├── Infrastructure
-    │   ├── Context
-    │   ├── Infrastructure.csproj
-    │   ├── Migrations
-    │   └── Repositories
-    ├── Safeguard.sln
-    └── Test
-        ├── Test.csproj
-        └── Usings.cs
+┌── App
+│   ├── App.csproj
+│   ├── appsettings.Development.json
+│   ├── appsettings.json
+│   ├── Configuration
+│   ├── Controllers
+│   ├── Db
+│   ├── Extensions
+│   ├── Ioc
+│   ├── Program.cs
+│   └── Properties
+├── Application
+│   ├── Application.csproj
+│   ├── Configuration
+│   ├── Dtos
+│   └── Services
+├── docker-compose.yml
+├── Dockerfile
+├── Domain
+│   ├── Domain.csproj
+│   ├── Interfaces
+│   └── Entities
+├── Infrastructure
+│   ├── Context
+│   ├── Infrastructure.csproj
+│   ├── Migrations
+│   └── Repositories
+├── Safeguard.sln
+└── Test
+├── Test.csproj
+└── Usings.cs
 ```
 
 ##  Getting Started
