@@ -4,6 +4,7 @@ using Infrastructure.Context;
 using PicEnfermagem.Api.Extensions;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Extensions.Configuration;
+using App.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +27,7 @@ builder.Services.AddCors(options =>
         .AllowAnyHeader());
 });
 
-builder.Services.AddAuthentication();
+builder.Services.AddAuthentication(builder.Configuration);
 
 builder.Services.AddDbContext<ApplicationContext>(opt =>
 {
