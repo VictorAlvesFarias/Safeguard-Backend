@@ -3,6 +3,7 @@ using ASP.NET_Core_Template.Ioc;
 using Infrastructure.Context;
 using PicEnfermagem.Api.Extensions;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,36 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSwagger();
 
 builder.Services.RegisterServices(builder.Configuration);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowedCorsOrigins",
+    builder => builder
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader());
+});
+
+builder.Services.AddAuthentication();
+
+builder.Services.AddDbContext<ApplicationContext>(opt =>
+{
+    //var connectionString = $"{configuration.GetConnectionString("DefaultConnection")}Password={Environment.GetEnvironmentVariable("DEVELOPMENT_DATABASE_KEY")};";
+    var connectionString = $"{builder.Configuration.GetConnectionString("DefaultConnection")};";
+
+    opt.UseSqlite(connectionString);
+});
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    var portConfig = builder.Configuration.GetSection("Ports").Get<Dictionary<string, int>>();
+
+    options.ListenLocalhost(portConfig["Https"], configure =>
+    {
+        configure.UseHttps();
+    });
+    options.ListenLocalhost(portConfig["Http"]);
+});
 
 var app = builder.Build();
 

@@ -33,23 +33,6 @@ namespace ASP.NET_Core_Template.Ioc
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationContext>()
                 .AddDefaultTokenProviders();
-
-            services.AddCors(options =>
-            {
-                options.AddPolicy("AllowedCorsOrigins",
-                builder => builder
-                    .AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader());
-            });
-            services.AddAuthentication(configuration);
-            services.AddDbContext<ApplicationContext>(opt =>
-            {
-                //var connectionString = $"{configuration.GetConnectionString("DefaultConnection")}Password={Environment.GetEnvironmentVariable("DEVELOPMENT_DATABASE_KEY")};";
-                var connectionString = $"{configuration.GetConnectionString("DefaultConnection")};";
-
-                opt.UseSqlite(connectionString);
-            });
         }
     }
 }
