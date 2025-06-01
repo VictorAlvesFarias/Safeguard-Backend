@@ -54,8 +54,9 @@ namespace Application.Services
         }
         public BaseResponse<Provider> UpdateProvider(ProviderRequest providerRequest, int id)
         {
-            var provider = _providerRepository.GetAll()
+            var provider = _providerRepository.Get()
                 .Include(e=>e.Image)
+                .ThenInclude(e => e.StoredFile)
                 .Where(e=>id == e.Id)
                 .FirstOrDefault();
 
@@ -66,7 +67,7 @@ namespace Application.Services
                 providerRequest.ImageId
             );
 
-            var success =  _providerRepository.UpdateAsync(provider);
+            var success =  _providerRepository.Update(provider);
             var response = new BaseResponse<Provider>(success);
 
             response.Data = provider;
@@ -76,18 +77,19 @@ namespace Application.Services
         }
         public DefaultResponse DeleteProvider(int id)
         {
-            var provider = _providerRepository.GetAsync(id).Result;
-            var success = _providerRepository.RemoveAsync(provider);
+            var provider = _providerRepository.Get().FirstOrDefault(e=>e.Id == id);
+            var success = _providerRepository.Remove(provider);
             var response = new DefaultResponse(success);
 
             return response;
         }
-        public BaseResponse<List<Provider>> GetAllProviders()
+        public BaseResponse<List<Provider>> GetProviders()
         {
 
-            var providers = _providerRepository.GetAll()
+            var providers = _providerRepository.Get()
                 .OrderByDescending(e => e.Id)
                 .Include(e => e.Image)
+                .ThenInclude(e => e.StoredFile)
                 .ToList();
 
             var response = new BaseResponse<List<Provider>>()
@@ -101,9 +103,10 @@ namespace Application.Services
         public BaseResponse<Provider> GetProviderById(int id)
         {
 
-            var provider = _providerRepository.GetAll()
+            var provider = _providerRepository.Get()
                 .Where(e => e.Id == id)
                 .Include(e=>e.Image)
+                .ThenInclude(e => e.StoredFile)
                 .FirstOrDefault();
 
             var response = new BaseResponse<Provider>()

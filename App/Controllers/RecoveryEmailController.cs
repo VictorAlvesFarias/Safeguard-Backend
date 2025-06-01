@@ -23,9 +23,9 @@ namespace Safeguard.Controllers
 
         [Authorize]
         [HttpGet("get-recovery-emails")]
-        public ActionResult<BaseResponse<List<RecoveryEmailResponse>>> GetAll(string referenceId, string type)
+        public ActionResult<BaseResponse<List<RecoveryEmailResponse>>> Get(int emailId)
         {
-            var response = _recoveryEmailService.GetAllRecoveryEmails(referenceId,  type);    
+            var response = _recoveryEmailService.GetRecoveryEmails(emailId);    
 
             return response.Result(_controller); 
         }

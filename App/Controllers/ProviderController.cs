@@ -40,9 +40,9 @@ namespace ASP.NET_Core_Template.Controllers
             return result.DefaultResult(_controller);
         }
         [HttpGet("get-providers")]
-        public ActionResult<BaseResponse<List<Provider>>> GetAllProviders()
+        public ActionResult<BaseResponse<List<Provider>>> GetProviders()
         {
-            var result = _providerService.GetAllProviders();
+            var result = _providerService.GetProviders();
             return result.Result(_controller);
         }
         [HttpGet("get-provider-by-id")]

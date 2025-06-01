@@ -15,7 +15,7 @@ namespace Application.Services
         BaseResponse<Platform> Register(PlatformRequest plat);
         BaseResponse<Platform> Update(PlatformRequest plat, int id);
         DefaultResponse Delete(int id);
-        BaseResponse<List<Platform>> GetAll();
+        BaseResponse<List<Platform>> Get();
         BaseResponse<Platform> GetPlatformById(int id);
     }
 }

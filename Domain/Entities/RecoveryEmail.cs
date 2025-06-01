@@ -9,14 +9,12 @@ namespace Domain.Entitites
 {
     public class RecoveryEmail: BaseEntityUserRelation
     {
-        public string ReferenceId { get; set; }
-        public string ReferenceType { get; set; }
+        public int ParentEmailId { get; set; }
         public int EmailId { get; set; }
 
-        public void Create(string type, string reference, int emailId)
+        public void Create(int parentEmail, int emailId)
         {
-            ReferenceType = type;
-            ReferenceId = reference;
+            ParentEmailId = parentEmail;
             EmailId = emailId;
         }
     }

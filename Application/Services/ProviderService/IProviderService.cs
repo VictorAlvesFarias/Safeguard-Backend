@@ -15,7 +15,7 @@ namespace Application.Services
          BaseResponse<Provider> RegisterProvider(ProviderRequest provider);
          BaseResponse<Provider> UpdateProvider(ProviderRequest provider, int id);
          DefaultResponse DeleteProvider(int id);
-         BaseResponse<List<Provider>> GetAllProviders();
+         BaseResponse<List<Provider>> GetProviders();
          BaseResponse<Provider> GetProviderById(int id);
     }
 }

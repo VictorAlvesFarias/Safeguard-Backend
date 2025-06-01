@@ -1,82 +1,79 @@
-﻿
-using Domain.Entitites;
+﻿using Domain.Entitites;
 using Infrastructure.Context;
+using Infrastructure.Factories.DbContextFactory;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace Infrastructure.Repositories.BaseRepository
 {
-    //Definição dos tipos do repositorio generico, o parametro "where", define que ela deve ser do tipo TEntity
-    //E o tipo TEntity deve ser uma classe, observe no arquivo de Ioc
     public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
         private readonly DbSet<TEntity> _entity;
-        private readonly ApplicationContext _context;
+        private readonly DbContext _context;
 
-        public BaseRepository(
-            ApplicationContext entity
-        )
+        public BaseRepository(DbContextFactory dbContextFactory)
         {
-            _entity = entity.Set<TEntity>();
-            _context = entity;
+            _context = dbContextFactory.CreateDbContext<TEntity>();
+            _entity = _context.Set<TEntity>();
         }
 
         public async Task<TEntity> AddAsync(TEntity entity)
         {
-            if (entity is BaseEntityUserRelation )
+            if (entity is BaseEntityUserRelation baseEntity)
             {
-                var baseEntity = entity as BaseEntityUserRelation;
-                
-                if (baseEntity is not null)
+                if (_context is ApplicationContext appContext)
                 {
-                    baseEntity.SetUser(_context.GetUserId());    
+                    baseEntity.SetUser(appContext.GetUserId());
                 }
             }
 
             var result = await _entity.AddAsync(entity);
-
-            _context.SaveChanges();
-
+            await _context.SaveChangesAsync();
             return result.Entity;
         }
-        public bool RemoveAsync(TEntity item)
+
+        public bool Remove(TEntity item)
         {
             _context.Remove(item);
-
             _context.SaveChanges();
-
             return true;
         }
-        public bool RemoveAsync(int id)
+
+        public bool Remove(int id)
         {
-            _context.Remove (_entity.FindAsync(id).Result);
-            _context.SaveChanges();
-
-            return true;
+            var entity = _entity.Find(id);
+            if (entity != null)
+            {
+                _context.Remove(entity);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
         }
-        public bool UpdateAsync(TEntity entity)
+
+        public bool Update(TEntity entity)
         {
             _entity.Update(entity);
-
             _context.SaveChanges();
-
             return true;
         }
-        public async Task<TEntity> GetAsync(int id)
-        {
-            var item = await _entity.FindAsync(id);
 
-            return item;
+        public TEntity GetById(int id)
+        {
+            return _entity.Find(id);
         }
-        public IQueryable<TEntity> GetAll()
-        {
-            IQueryable<TEntity> query = _entity;
 
-            if (typeof(BaseEntityUserRelation).IsAssignableFrom(typeof(TEntity)))
+        public IQueryable<TEntity> Get()
+        {
+            var query = _entity.AsQueryable();
+
+            if (typeof(BaseEntityUserRelation).IsAssignableFrom(typeof(TEntity)) && _context is ApplicationContext appContext)
             {
-                var userId = _context.GetUserId();
-                var newQuery = query.OfType<BaseEntityUserRelation>() .Where(x => x.UserId == userId).Cast<TEntity>();
-                return newQuery;
+                var userId = appContext.GetUserId();
+                var filtered = query.OfType<BaseEntityUserRelation>()
+                    .Where(x => x.UserId == userId)
+                    .Cast<TEntity>();
+
+                return filtered;
             }
 
             return query;

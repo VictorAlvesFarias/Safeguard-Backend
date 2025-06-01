@@ -40,11 +40,11 @@ namespace ASP.NET_Core_Template.Controllers
         }
 
         [HttpGet("get-emails")]
-        public ActionResult<BaseResponse<List<Email>>> GetAllProviders()
+        public ActionResult<BaseResponse<List<Email>>> GetProviders()
         {
             try
             {
-                var result = _emailService.GetAllEmail();
+                var result = _emailService.GetEmail();
                 return result.Result(_controller);
             }
             catch(Exception e)

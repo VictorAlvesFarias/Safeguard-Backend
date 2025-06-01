@@ -5,10 +5,14 @@ using PicEnfermagem.Api.Extensions;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Extensions.Configuration;
 using App.Extensions;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -37,16 +41,16 @@ builder.Services.AddDbContext<ApplicationContext>(opt =>
     opt.UseSqlite(connectionString);
 });
 
-builder.WebHost.ConfigureKestrel(options =>
-{
-    var portConfig = builder.Configuration.GetSection("Ports").Get<Dictionary<string, int>>();
+//builder.WebHost.ConfigureKestrel(options =>
+//{
+//    var portConfig = builder.Configuration.GetSection("Ports").Get<Dictionary<string, int>>();
 
-    options.ListenLocalhost(portConfig["Https"], configure =>
-    {
-        configure.UseHttps();
-    });
-    options.ListenLocalhost(portConfig["Http"]);
-});
+//    options.ListenLocalhost(portConfig["Https"], configure =>
+//    {
+//        configure.UseHttps();
+//    });
+//    options.ListenLocalhost(portConfig["Http"]);
+//});
 
 var app = builder.Build();
 

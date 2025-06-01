@@ -10,14 +10,12 @@ namespace Domain.Entitites
     public class RecoveryKey: BaseEntityUserRelation
     {
         public string Key { get; set; }
-        public string ReferenceId { get; set; }
-        public string ReferenceType { get; set; }
+        public string EmailId { get; set; }
 
-        public void Create(string type, string key,string reference)
+        public void Create(string emailId, string key)
         {
             Key = key;
-            ReferenceType = type;
-            ReferenceId = reference;
+            EmailId= emailId;
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Application.Dtos.RecoveryEmail.Base
 {
     public class RecoveryEmailResponse
     {
-        public int EmailId { get; set; }
+        public int ParentEmailId { get; set; }
         public int Id { get; set; }
         public AppFile Image { get; set; }
         public string Email { get; set; }

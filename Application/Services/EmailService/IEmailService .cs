@@ -14,7 +14,7 @@ namespace Application.Services
          BaseResponse<Email> RegisterEmail(EmailRequest emailRequest);
          BaseResponse<Email> UpdateEmail(EmailRequest emailRequest, int id);
          DefaultResponse DeleteEmail(int id);
-         BaseResponse<List<Email>> GetAllEmail();
+         BaseResponse<List<Email>> GetEmail();
          BaseResponse<Email> GetEmailById(int id);
     }
 }

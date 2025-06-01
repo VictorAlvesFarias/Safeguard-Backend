@@ -43,9 +43,9 @@ namespace ASP.NET_Core_Template.Controllers
             return result.DefaultResult(_controller);
         }
         [HttpGet("get-platforms")]
-        public ActionResult<BaseResponse<List<Platform>>> GetAll()
+        public ActionResult<BaseResponse<List<Platform>>> Get()
         {
-            var result = _platformService.GetAll();
+            var result = _platformService.Get();
             return result.Result(_controller);
         }
 

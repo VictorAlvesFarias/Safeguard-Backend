@@ -10,7 +10,6 @@ namespace Application.Dtos.RecoveryKey.Base
     public class RecoveryKeyRequest
     {
         public string Key { get; set; }
-        public string ReferenceType { get; set; }
-        public string ReferenceId { get; set; }
+        public string EmailId { get; set; }
     }
 }

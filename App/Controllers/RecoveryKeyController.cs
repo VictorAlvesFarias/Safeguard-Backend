@@ -23,9 +23,9 @@ namespace Safeguard.Controllers
 
         [Authorize]
         [HttpGet("get-recovery-keys")]
-        public ActionResult<BaseResponse<List<RecoveryKey>>> GetAll(string referenceId, string type)
+        public ActionResult<BaseResponse<List<RecoveryKey>>> Get(string emailId)
         {
-            var response = _recoveryKeyService.GetAllRecoveryKeys(referenceId,  type);    
+            var response = _recoveryKeyService.GetRecoveryKeys(emailId);    
 
             return response.Result(_controller); 
         }

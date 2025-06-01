@@ -1,12 +1,7 @@
 ﻿using Application.Dtos.Default;
-using Application.Dtos.Provider.Base;
-using Application.Services;
 using Application.Services.AppFileService;
-using Application.Services.EmailService;
-using Application.Services.Identity;
 using Domain.Entitites;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Principal;
 
 namespace ASP.NET_Core_Template.Controllers
 {

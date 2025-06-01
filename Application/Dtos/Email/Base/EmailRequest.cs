@@ -15,6 +15,8 @@ namespace Application.Dtos.Provider.Base
         public string Username { get; set; }
         public string Phone { get; set; }
         public string Password { get; set; }
-        public int ProviderId { get; set; }   
+        public int? ProviderId { get; set; }   
+        public int? EmailAddressId { get; set; }
+        public int? PlatformId { get; set; }
     }
 }

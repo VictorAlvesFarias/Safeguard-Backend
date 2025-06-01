@@ -9,8 +9,7 @@ namespace Application.Dtos.RecoveryEmail.Base
 {
     public class RecoveryEmailRequest
     {
-        public string ReferenceType { get; set; }
-        public string ReferenceId { get; set; }
+        public int ParentEmailId { get; set; }
         public int EmailId { get; set; }
     }
 }

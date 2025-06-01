@@ -32,7 +32,6 @@ namespace Application.Services
 
         public BaseResponse<Platform> Register(PlatformRequest platRequest)
         {
-
             var plat = new Platform();
 
             plat.Create(
@@ -42,7 +41,7 @@ namespace Application.Services
 
             var addResult = _platformRepository.AddAsync(plat).Result;
             var response = new BaseResponse<Platform>(addResult is not null);
-
+              
             response.Data = addResult;
 
             if (response.Success)
@@ -55,14 +54,14 @@ namespace Application.Services
         }
         public BaseResponse<Platform> Update(PlatformRequest platRequest, int id)
         {
-            var plat = _platformRepository.GetAsync(id).Result;
+            var plat = _platformRepository.Get().FirstOrDefault(e => e.Id == id);
 
             plat.Update(
                 platRequest.Name,
                 platRequest.ImageId
             );
 
-            var success = _platformRepository.UpdateAsync(plat);
+            var success = _platformRepository.Update(plat);
             var response = new BaseResponse<Platform>(success);
 
             response.Data = plat;
@@ -77,18 +76,19 @@ namespace Application.Services
         }
         public DefaultResponse Delete(int id)
         {
-            var plat = _platformRepository.GetAsync(id).Result;
-            var success = _platformRepository.RemoveAsync(plat);
+            var plat = _platformRepository.Get().FirstOrDefault(e=>e.Id==id);
+            var success = _platformRepository.Remove(plat);
             var response = new DefaultResponse(success);
 
             return response;
         }
-        public BaseResponse<List<Platform>> GetAll()
+        public BaseResponse<List<Platform>> Get()
         {
 
-            var plats = _platformRepository.GetAll()
+            var plats = _platformRepository.Get()
                 .OrderByDescending(e => e.Id)
                 .Include(e=>e.Image)
+                .ThenInclude(e => e.StoredFile)
                 .ToList();
             var response = new BaseResponse<List<Platform>>()
             {
@@ -101,9 +101,10 @@ namespace Application.Services
         public BaseResponse<Platform> GetPlatformById(int id)
         {
 
-            var provider = _platformRepository.GetAll()
+            var provider = _platformRepository.Get()
                 .Where(e=>e.Id==id)
                 .Include(e=>e.Image)
+                .ThenInclude(e => e.StoredFile)
                 .FirstOrDefault();
 
             var response = new BaseResponse<Platform>()

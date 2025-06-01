@@ -23,9 +23,8 @@ namespace Safeguard.Services
             var recoveryKey = new RecoveryKey();
 
             recoveryKey.Create(
-                keyRequest.ReferenceType,
-                keyRequest.Key,
-                keyRequest.ReferenceId
+                keyRequest.EmailId,
+                keyRequest.Key
             );
 
             var result = _recoveryKey.AddAsync(recoveryKey).Result;
@@ -44,16 +43,16 @@ namespace Safeguard.Services
 
         public DefaultResponse DeleteRecoveryKey(int id)
         {
-            var recoveryKey = _recoveryKey.GetAll().Where(e=>e.Id == id).FirstOrDefault();
-            var success = _recoveryKey.RemoveAsync(recoveryKey);
+            var recoveryKey = _recoveryKey.Get().Where(e=>e.Id == id).FirstOrDefault();
+            var success = _recoveryKey.Remove(recoveryKey);
             var response = new DefaultResponse(success);
 
             return response;
         }
 
-        public BaseResponse<List<RecoveryKey>> GetAllRecoveryKeys(string referenceId, string type)
+        public BaseResponse<List<RecoveryKey>> GetRecoveryKeys(string emailId)
         {
-            var result = _recoveryKey.GetAll().Where(e=>e.ReferenceType == type && e.ReferenceId == referenceId).ToList();
+            var result = _recoveryKey.Get().Where(e=>e.EmailId == emailId).ToList();
             var response = new BaseResponse<List<RecoveryKey>>(result is not null);
 
             response.Data = result;
@@ -62,7 +61,6 @@ namespace Safeguard.Services
             {
                 response.AddError("Não foi possivel completar a operação");
             }
-
 
             return response;
         }

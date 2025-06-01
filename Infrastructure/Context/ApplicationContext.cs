@@ -14,10 +14,11 @@ namespace Infrastructure.Context
         private readonly IHttpContextAccessor _contextAccessor;
         protected DbSet<Provider> Provider { get; set; }
         protected DbSet<Email> Email { get; set; }
-        protected DbSet<Account> Account { get; set; }
         protected DbSet<AppFile> AppFile { get; set; }
         protected DbSet<Platform> Platform { get; set; }
         protected DbSet<RecoveryKey> RecoveryKey { get; set; }
+        protected DbSet<EmailAddress> EmailAddress { get; set; }
+        protected DbSet<EmailFile> EmailFile { get; set; }
         protected DbSet<RecoveryEmail> RecoveryEmail { get; set; }
         public ApplicationContext(DbContextOptions<ApplicationContext> options, IHttpContextAccessor contextAccessor)
             : base(options)
@@ -40,42 +41,56 @@ namespace Infrastructure.Context
             modelBuilder.Entity<Provider>()
                 .HasOne(e => e.Image)
                 .WithMany()
-                .HasForeignKey(e => e.ImageId); 
+                .HasForeignKey(e => e.ImageId);
 
-            modelBuilder.Entity<Account>()
-                .HasOne(e => e.Email)
-                .WithMany()
-                .HasForeignKey(e => e.EmailId)
-                .OnDelete(DeleteBehavior.NoAction);
-
-            modelBuilder.Entity<Email>()
-                .HasOne(e => e.Provider)
-                .WithMany()
-                .HasForeignKey(e => e.ProviderId);
-
-            modelBuilder.Entity<Account>()
-                .HasOne(e => e.Platform)
-                .WithMany()
-                .HasForeignKey(e => e.PlatformId)
-                .OnDelete(DeleteBehavior.NoAction);
             //-----------------------------------------------
-            modelBuilder.Entity<Account>()
-                .HasOne(e => e.User)
-                .WithMany()
-                .HasForeignKey(e=>e.UserId)
-                .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<Email>()
-                .HasOne(e => e.User)
-                .WithMany()
-                .HasForeignKey(e => e.UserId)
-                .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Email>(entity =>
+            {
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasOne(e => e.EmailAddress)
+                    .WithMany()
+                    .HasForeignKey(e => e.EmailAddressId)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(false);
+
+                entity.HasOne(e => e.Platform)
+                    .WithMany()
+                    .HasForeignKey(e => e.PlatformId)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(false);
+
+                entity.HasOne(e => e.EmailAddress)
+                    .WithMany()
+                    .HasForeignKey(e => e.EmailAddressId)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(false);
+
+                entity.Property(e => e.Name).IsRequired();
+                entity.Property(e => e.LastName).IsRequired();
+                entity.Property(e => e.Username).IsRequired();
+                entity.Property(e => e.Password).IsRequired();
+                entity.Property(e => e.Phone).IsRequired(false);
+                entity.Property(e => e.BirthDate).IsRequired();
+
+                entity.HasIndex(e => e.Username).IsUnique();
+            });
 
             modelBuilder.Entity<AppFile>()
                 .HasOne(e => e.User)
                 .WithMany()
                 .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Email>(e =>
+            {
+                e.HasIndex(e => e.Username)
+                    .IsUnique(false);
+            });
 
             modelBuilder.Entity<Platform>()
                 .HasOne(e => e.User)

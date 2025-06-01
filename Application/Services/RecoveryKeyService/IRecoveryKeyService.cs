@@ -10,6 +10,6 @@ namespace Safeguard.Services
     {
         BaseResponse<RecoveryKey> AddRecoveryKey(RecoveryKeyRequest provider);
         DefaultResponse DeleteRecoveryKey(int id);
-        BaseResponse<List<RecoveryKey>> GetAllRecoveryKeys(string referenceId, string type);
+        BaseResponse<List<RecoveryKey>> GetRecoveryKeys(string emailId);
     }
 }

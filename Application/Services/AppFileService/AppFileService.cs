@@ -2,6 +2,8 @@
 using Domain.Entitites;
 using Infrastructure.Repositories.BaseRepository;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,29 +15,39 @@ namespace Application.Services.AppFileService
     public class AppFileService : IAppFileService
     {
         private readonly IBaseRepository<AppFile> _appFileRepository;
+        private readonly IBaseRepository<StoredFile> _storedFileRepository;
         public AppFileService(
-             IBaseRepository<AppFile> appFileRepository
+             IBaseRepository<AppFile> appFileRepository,
+             IBaseRepository<StoredFile> storedFileRepository
         ) {
             _appFileRepository = appFileRepository;
+            _storedFileRepository = storedFileRepository;
         }
         public BaseResponse<AppFile> InsertFile(IFormFile req)
         {
             var file = new AppFile();
+            var storedFile = new StoredFile();
             var stream = req.OpenReadStream();
             
             using (var memoryStream = new MemoryStream())
             {
                 stream.CopyTo( memoryStream );
 
-                file.Create(
+                storedFile.Create(
                     req.FileName,
                     req.ContentType,
                      Convert.ToBase64String(memoryStream.ToArray()) 
                 );
             }
                 
-            var result = _appFileRepository.AddAsync(file).Result;
-            var response = new BaseResponse<AppFile>(result is not null);
+            var storedFileAddedFile = _storedFileRepository.AddAsync(storedFile).Result;
+
+            file.Create(
+                storedFileAddedFile
+            );
+
+            var appFileAddResult = _appFileRepository.AddAsync(file).Result;
+            var response = new BaseResponse<AppFile>(appFileAddResult is not null && storedFileAddedFile is not null);
 
             if (!response.Success)
             {
@@ -43,15 +55,18 @@ namespace Application.Services.AppFileService
             }
             else
             {
-                response.Data = result;
+                response.Data = file;
             }
 
             return response;
         }
         public DefaultResponse DeleteFile(int id)
         {
-            var result = _appFileRepository.RemoveAsync(id);
-            var response = new DefaultResponse(result);
+            var appFile = _appFileRepository.Get().FirstOrDefault(e => e.Id == id);
+            var storedFile = _storedFileRepository.Get().FirstOrDefault(e => e.Id == appFile.StoredFileId);
+            var removeAppFileResult = _appFileRepository.Remove(appFile);
+            var removeStoredFileResult = _storedFileRepository.Remove(storedFile);
+            var response = new DefaultResponse(removeAppFileResult && removeStoredFileResult);
 
             if (!response.Success)
             {
@@ -62,15 +77,18 @@ namespace Application.Services.AppFileService
         }
         public BaseResponse<List<AppFile>> GetFiles()
         {
-
-            var result = _appFileRepository.GetAll().OrderByDescending(e=>e.Id).ToList();
+            var result = _appFileRepository.Get()
+                .OrderByDescending(e=>e.Id)
+                .Include(e=>e.StoredFile)
+                .ToList();
             var response = new BaseResponse<List<AppFile>>(result is not null);
 
             if (!response.Success)
             {
                 response.AddError("Não foi possivel completar a operação");
             }
-            else {
+            else
+            {
                 response.Data = result;
             }
 
