@@ -41,16 +41,16 @@ builder.Services.AddDbContext<ApplicationContext>(opt =>
     opt.UseSqlite(connectionString);
 });
 
-//builder.WebHost.ConfigureKestrel(options =>
-//{
-//    var portConfig = builder.Configuration.GetSection("Ports").Get<Dictionary<string, int>>();
+builder.WebHost.ConfigureKestrel(options =>
+{
+    var portConfig = builder.Configuration.GetSection("Ports").Get<Dictionary<string, int>>();
 
-//    options.ListenLocalhost(portConfig["Https"], configure =>
-//    {
-//        configure.UseHttps();
-//    });
-//    options.ListenLocalhost(portConfig["Http"]);
-//});
+    options.ListenLocalhost(portConfig["Https"], configure =>
+    {
+        configure.UseHttps();
+    });
+    options.ListenLocalhost(portConfig["Http"]);
+});
 
 var app = builder.Build();
 
